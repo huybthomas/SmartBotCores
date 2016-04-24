@@ -7,10 +7,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = SmartCarCoreApplication.class)
-public class SmartCarCoreApplicationTests {
-
+public class SmartCarCoreApplicationTests
+{
 	@Test
-	public void contextLoads() {
+	public void contextLoads()
+	{
+		//Loading basic context
 	}
-
 }
