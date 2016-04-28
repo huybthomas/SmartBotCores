@@ -33,7 +33,10 @@ public class NavigationParser {
                 direction start = findStartDir(current);
                 direction stop = findStopDir(next);
                 DriveDir relDir = getNextRelDir(start, stop);
+                //Pass crossroad
                 commands.add(relDir);
+                //Drive followLine
+                commands.add(new DriveDir(DriveDirEnum.FOLLOW));
             }
         }
         return commands;
