@@ -28,4 +28,5 @@ public class GsonParser {
         Gson gson = new GsonBuilder().create();
         //code voor eventueel nar file te schrijven
     }
+
 }

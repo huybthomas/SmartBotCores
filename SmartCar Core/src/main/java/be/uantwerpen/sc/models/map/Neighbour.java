@@ -12,6 +12,9 @@ public class Neighbour {
     private int length;
     private int weight;
 
+    public Neighbour() {
+    }
+
     public Neighbour(LinkEntity linkEntity) {
         this.pointEntity = linkEntity.getStopId();
         this.length = linkEntity.getLength();

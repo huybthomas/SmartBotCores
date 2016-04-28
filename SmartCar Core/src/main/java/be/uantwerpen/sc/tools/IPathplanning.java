@@ -1,5 +1,6 @@
 package be.uantwerpen.sc.tools;
 
+import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.models.map.MapJson;
 
 import java.util.List;
@@ -10,6 +11,6 @@ import java.util.List;
 
 public interface IPathplanning {
 
-    List<Vertex> Calculatepath(MapJson mapJson, int start, int stop);
+    List<Vertex> Calculatepath(Map map, int start, int stop);
 
 }
