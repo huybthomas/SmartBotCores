@@ -110,5 +110,6 @@ public class TerminalService
         Vertex[] list = mapController.getPath();
         List<Vertex> list2 = Arrays.asList(list);
         NavigationParser navigationParser = new NavigationParser(list2);
+        navigationParser.parseMap();
     }
 }

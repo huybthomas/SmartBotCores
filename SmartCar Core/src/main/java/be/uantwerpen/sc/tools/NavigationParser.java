@@ -14,15 +14,11 @@ public class NavigationParser {
 
     public NavigationParser(List<Vertex> list){
         this.list = list;
-        if(parseMap()){
-            //continue
-        };
     }
 
-    private boolean parseMap(){
+    public Queue<driveDir> parseMap(){
         if(list.isEmpty()){
             Terminal.printTerminalError("Cannot parse empty map");
-            return false;
         }else{
             //First part is always driving forward.
             commands.add(driveDir.FOLLOW);
@@ -40,7 +36,7 @@ public class NavigationParser {
                 commands.add(relDir);
             }
         }
-        return true;
+        return commands;
     }
 
     private direction findStartDir(Vertex current){
