@@ -109,11 +109,12 @@ public class TerminalService
         //get Map from server
         //Send map + start + end to pathplanning
 
-        Vertex[] list = mapController.getPath();
+       /* Vertex[] list = mapController.getPath();
         List<Vertex> list2 = Arrays.asList(list);
         NavigationParser navigationParser = new NavigationParser(list2);
-        navigationParser.parseMap();
+        navigationParser.parseMap();*/
         IPathplanning pathplanning = new PathplanningService();
-        pathplanning.Calculatepath(mapController.getMap(),start,end);
+        NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),start,end));
+        navigationParser.parseMap();
     }
 }
