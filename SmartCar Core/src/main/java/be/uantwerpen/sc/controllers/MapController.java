@@ -1,5 +1,6 @@
 package be.uantwerpen.sc.controllers;
 
+import be.uantwerpen.sc.tools.Vertex;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -14,13 +15,13 @@ import org.springframework.web.client.RestTemplate;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Niels on 24/04/2016.
  */
 @RestController
-@RequestMapping(value = "/map/")
 public class MapController {
 
     /*@RequestMapping(method = RequestMethod.GET)
@@ -45,7 +46,7 @@ public class MapController {
         return result.toString();
     }*/
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET ,value = "/map/")
     public Map getMap(){
         String coreIP = "localhost:1994";
         RestTemplate restTemplate = new RestTemplate();
@@ -53,5 +54,15 @@ public class MapController {
         responseList = restTemplate.getForEntity(coreIP.toString()+"map", Map.class);
         Map map = responseList.getBody();
         return map;
+    }
+
+    @RequestMapping(method = RequestMethod.GET ,value = "/map2/")
+    public Vertex[] getPath(){
+        String coreIP = "http://146.175.140.117:1994";
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Vertex[]> responseList;
+        responseList = restTemplate.getForEntity(coreIP.toString()+"/map/1/path/24", Vertex[].class);
+        Vertex[] list = responseList.getBody();
+        return list;
     }
 }

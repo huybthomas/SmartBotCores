@@ -10,6 +10,8 @@ import java.util.List;
  */
 public class Vertex implements Comparable<Vertex> {
 
+    public Vertex(){}
+
     private int id;
     private List<Edge> adjacencies = new ArrayList<>();
     private double minDistance = Double.POSITIVE_INFINITY;
@@ -51,6 +53,27 @@ public class Vertex implements Comparable<Vertex> {
 
     public void setPrevious(Vertex previous) {
         this.previous = previous;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if(Vertex.class.isAssignableFrom(obj.getClass())) {
+            final Vertex other = (Vertex) obj;
+            if ((this.id == -1) ? (other.id != -1) : !(this.id == other.id)) {
+                return false;
+            }
+            return true;
+        }else if(Edge.class.isAssignableFrom(obj.getClass())){
+            final Edge other = (Edge) obj;
+            if ((this.id == -1) ? (other.getTarget() != -1) : !(this.id == other.getTarget())) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override

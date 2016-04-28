@@ -1,7 +1,15 @@
 package be.uantwerpen.sc.services;
 
+import be.uantwerpen.sc.controllers.CController;
+import be.uantwerpen.sc.controllers.MapController;
+import be.uantwerpen.sc.tools.NavigationParser;
 import be.uantwerpen.sc.tools.Terminal;
+import be.uantwerpen.sc.tools.Vertex;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Thomas on 14/04/2016.
@@ -95,5 +103,12 @@ public class TerminalService
 
     private void startPathPlanning(int start, int end){
         terminal.printTerminal("Starting pathplanning from point " + start + " to " + end);
+        //get Map from server
+        //Send map + start + end to pathplanning
+        MapController mapController = new MapController();
+
+        Vertex[] list = mapController.getPath();
+        List<Vertex> list2 = Arrays.asList(list);
+        NavigationParser navigationParser = new NavigationParser(list2);
     }
 }
