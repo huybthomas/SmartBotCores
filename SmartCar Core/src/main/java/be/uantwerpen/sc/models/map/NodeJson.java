@@ -11,6 +11,9 @@ public class NodeJson {
     private PointEntity pointEntity;
     private List<Neighbour> neighbours;
 
+    public NodeJson() {
+    }
+
     public NodeJson(PointEntity pointEntity) {
         this.pointEntity = pointEntity;
     }

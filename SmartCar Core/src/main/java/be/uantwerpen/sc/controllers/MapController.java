@@ -1,5 +1,7 @@
 package be.uantwerpen.sc.controllers;
 
+import be.uantwerpen.sc.models.map.Map;
+import be.uantwerpen.sc.models.map.MapJson;
 import be.uantwerpen.sc.tools.Vertex;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -15,13 +17,13 @@ import org.springframework.web.client.RestTemplate;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map;
+
 
 /**
  * Created by Niels on 24/04/2016.
  */
 @RestController
+@RequestMapping(value = "/map/")
 public class MapController {
 
     /*@RequestMapping(method = RequestMethod.GET)
@@ -46,13 +48,23 @@ public class MapController {
         return result.toString();
     }*/
 
-    @RequestMapping(method = RequestMethod.GET ,value = "/map/")
+    @RequestMapping(method = RequestMethod.GET)
     public Map getMap(){
-        String coreIP = "localhost:1994";
+        String coreIP = "http://localhost:1994";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Map> responseList;
-        responseList = restTemplate.getForEntity(coreIP.toString()+"map", Map.class);
+        responseList = restTemplate.getForEntity(coreIP.toString()+"/map/", Map.class);
         Map map = responseList.getBody();
+        return map;
+    }
+
+    @RequestMapping(value = "json", method = RequestMethod.GET)
+    public MapJson getMapJson(){
+        String coreIP = "http://localhost:1994";
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<MapJson> responseList;
+        responseList = restTemplate.getForEntity(coreIP.toString()+"/map/json", MapJson.class);
+        MapJson map = responseList.getBody();
         return map;
     }
 

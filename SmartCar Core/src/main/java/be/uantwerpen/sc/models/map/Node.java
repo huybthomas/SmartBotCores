@@ -14,6 +14,9 @@ public class Node {
     private PointEntity pointEntity;
     private List<LinkEntity> neighbours;
 
+    public Node() {
+    }
+
     public Node(PointEntity pointEntity) {
         this.pointEntity = pointEntity;
         this.nodeId = pointEntity.getPid();

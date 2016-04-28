@@ -2,6 +2,7 @@ package be.uantwerpen.sc.services;
 
 import be.uantwerpen.sc.controllers.CController;
 import be.uantwerpen.sc.controllers.MapController;
+import be.uantwerpen.sc.tools.IPathplanning;
 import be.uantwerpen.sc.tools.NavigationParser;
 import be.uantwerpen.sc.tools.Terminal;
 import be.uantwerpen.sc.tools.Vertex;
@@ -18,6 +19,8 @@ import java.util.List;
 public class TerminalService
 {
     private Terminal terminal;
+    @Autowired
+    private MapController mapController;
 
     public TerminalService()
     {
@@ -105,11 +108,12 @@ public class TerminalService
         terminal.printTerminal("Starting pathplanning from point " + start + " to " + end);
         //get Map from server
         //Send map + start + end to pathplanning
-        MapController mapController = new MapController();
 
         Vertex[] list = mapController.getPath();
         List<Vertex> list2 = Arrays.asList(list);
         NavigationParser navigationParser = new NavigationParser(list2);
         navigationParser.parseMap();
+        IPathplanning pathplanning = new PathplanningService();
+        pathplanning.Calculatepath(mapController.getMap(),start,end);
     }
 }
