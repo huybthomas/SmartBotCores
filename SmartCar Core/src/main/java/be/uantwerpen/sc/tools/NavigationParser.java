@@ -10,18 +10,18 @@ import java.util.*;
 public class NavigationParser {
 
     List<Vertex> list;
-    Queue<driveDir> commands = new LinkedList<driveDir>();
+    Queue<DriveDir> commands = new LinkedList<DriveDir>();
 
     public NavigationParser(List<Vertex> list){
         this.list = list;
     }
 
-    public Queue<driveDir> parseMap(){
+    public Queue<DriveDir> parseMap(){
         if(list.isEmpty()){
             Terminal.printTerminalError("Cannot parse empty map");
         }else{
             //First part is always driving forward.
-            commands.add(driveDir.FOLLOW);
+            commands.add(new DriveDir(DriveDirEnum.FOLLOW));
             //Second part is parsing the rest of the map
             Vertex current = list.get(0);
             Vertex previous = list.get(0);
@@ -32,7 +32,7 @@ public class NavigationParser {
                 next = list.get(i);
                 direction start = findStartDir(current);
                 direction stop = findStopDir(next);
-                driveDir relDir = getNextRelDir(start, stop);
+                DriveDir relDir = getNextRelDir(start, stop);
                 commands.add(relDir);
             }
         }
@@ -68,7 +68,7 @@ public class NavigationParser {
         }
     }
 
-    private driveDir getNextRelDir(direction startDir, direction stopDir){
+    private DriveDir getNextRelDir(direction startDir, direction stopDir){
         //Calculate relative direction
         switch(startDir)
         {
@@ -78,13 +78,13 @@ public class NavigationParser {
                 {
                     //Go EAST
                     case EAST:
-                        return driveDir.LEFT;   //Turn LEFT
+                        return new DriveDir(DriveDirEnum.LEFT);   //Turn LEFT
                     //Go SOUTH
                     case SOUTH:
-                        return driveDir.FORWARD;   //Go STRAIGHT
+                        return new DriveDir(DriveDirEnum.FORWARD);   //Go STRAIGHT
                     //Go WEST
                     case WEST:
-                        return driveDir.RIGHT;   //Turn RIGHT
+                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn RIGHT
                     
                 }
                 
@@ -94,13 +94,13 @@ public class NavigationParser {
                 {
                     //Go NORTH
                     case NORTH:
-                        return driveDir.RIGHT;   //Turn RIGHT
+                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn RIGHT
                     //Go SOUTH
                     case SOUTH:
-                        return driveDir.LEFT;   //Turn LEFT
+                        return new DriveDir(DriveDirEnum.LEFT);   //Turn LEFT
                     //Go WEST
                     case WEST:
-                        return driveDir.FORWARD;   //Go STRAIGHT
+                        return new DriveDir(DriveDirEnum.FORWARD);   //Go STRAIGHT
                 }
                 
             //From SOUTH
@@ -109,13 +109,13 @@ public class NavigationParser {
                 {
                     //Go NORTH
                     case NORTH:
-                        return driveDir.FORWARD;   //Go STRAIGHT
+                        return new DriveDir(DriveDirEnum.FORWARD);   //Go STRAIGHT
                     //Go EAST
                     case EAST:
-                        return driveDir.RIGHT;   //Turn RIGHT
+                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn RIGHT
                     //Go WEST
                     case WEST:
-                        return driveDir.LEFT;   //Turn LEFT
+                        return new DriveDir(DriveDirEnum.LEFT);   //Turn LEFT
                     
                 }
                 
@@ -125,15 +125,15 @@ public class NavigationParser {
                 {
                     //Go NORTH
                     case NORTH:
-                        return driveDir.LEFT;   //Turn LEFT
+                        return new DriveDir(DriveDirEnum.LEFT);   //Turn LEFT
                     
                     //Go EAST
                     case EAST:
-                        return driveDir.FORWARD;   //Go STRAIGHT
+                        return new DriveDir(DriveDirEnum.FORWARD);   //Go STRAIGHT
                     
                     //Go SOUTH
                     case SOUTH:
-                        return driveDir.RIGHT;   //Turn RIGHT
+                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn RIGHT
                     
                 }
                 
@@ -149,11 +149,4 @@ enum direction{
     EAST,
     SOUTH,
     WEST
-}
-
-enum driveDir{
-    FORWARD,
-    LEFT,
-    RIGHT,
-    FOLLOW
 }
