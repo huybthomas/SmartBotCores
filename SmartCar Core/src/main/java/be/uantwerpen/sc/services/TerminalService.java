@@ -108,7 +108,6 @@ public class TerminalService
         terminal.printTerminal("Starting pathplanning from point " + start + " to " + end);
         //get Map from server
         //Send map + start + end to pathplanning
-        MapController mapController = new MapController();
 
         Vertex[] list = mapController.getPath();
         List<Vertex> list2 = Arrays.asList(list);
