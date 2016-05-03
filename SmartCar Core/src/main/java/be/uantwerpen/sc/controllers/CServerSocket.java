@@ -23,33 +23,41 @@ public class CServerSocket {
         try {
             byte[] message = str.getBytes();
             boolean ack = false;
+            int attempts = 0;
 
             //Open Sockets
-            ServerSocket serverSocket = new ServerSocket(1004);
-            Socket socket = new Socket(ip, 1003);
+            Socket socket = new Socket(ip, 1004);
 
             DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
 
+            while(!ack && attempts <5) {
+                //Setup Ack receiver
+                ServerSocket serverSocket = new ServerSocket(1003);
+                SocketReceiveThread receiver = new SocketReceiveThread(serverSocket);
+                receiver.start();
 
-            while(!ack ) {
                 //Send message
                 dOut.writeInt(message.length); // write length of the message
                 dOut.write(message);           // write the message
 
-                SocketReceiveThread receiver = new SocketReceiveThread(serverSocket, ack);
-                receiver.start();
+                attempts++;
 
-                while(!ack) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
+                int softAttempts = 0;
+                while(!ack && softAttempts < 5) {
+                    softAttempts++;
+                    ack = receiver.getAckStatus();
+                    try{
+                        Thread.sleep(200);
+                    }catch(InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
+
+                serverSocket.close();
             }
 
             //Close all
-            serverSocket.close();
+
             socket.close();
 
         } catch (IOException e) {

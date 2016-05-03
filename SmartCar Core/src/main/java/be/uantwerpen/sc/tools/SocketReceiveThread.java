@@ -15,14 +15,15 @@ public class SocketReceiveThread extends Thread{
     ServerSocket serverSocket = null;
     boolean received;
 
-    public SocketReceiveThread(ServerSocket serverSocket ,boolean received) {
+    public SocketReceiveThread(ServerSocket serverSocket) {
         super("SocketReceiveThread");
         this.serverSocket = serverSocket;
-        this.received = received;
+        this.received = false;
     }
     public void run() {
         try {
             //Receive Answer
+            serverSocket.setSoTimeout(1000);
             Socket receiveSocket = serverSocket.accept();
             DataInputStream dIn = new DataInputStream(receiveSocket.getInputStream());
 
@@ -41,5 +42,9 @@ public class SocketReceiveThread extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public synchronized boolean getAckStatus(){
+        return received;
     }
 }
