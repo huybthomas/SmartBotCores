@@ -21,8 +21,7 @@ public class RobotCoreLoop implements Runnable{
 
     @Autowired
     TerminalService terminalService;
-    @Autowired
-    QueueService queueService;
+    private QueueService queueService;
     @Autowired
     CStatusEventHandler cStatusEventHandler;
     @Autowired
@@ -32,7 +31,8 @@ public class RobotCoreLoop implements Runnable{
     @Autowired
     MapController mapController;
 
-    public RobotCoreLoop(){
+    public RobotCoreLoop(QueueService queueService){
+        this.queueService = queueService;
         start();
         this.run();
     }

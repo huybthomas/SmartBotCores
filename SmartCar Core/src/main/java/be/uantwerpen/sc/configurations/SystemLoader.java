@@ -24,22 +24,22 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     @Autowired
     QueueService queueService;
     @Autowired
+    CCommandSender cCommandSender;
+    /*@Autowired
     CStatusEventHandler cStatusEventHandler;
     @Autowired
-    CCommandSender cCommandSender;
-    @Autowired
-    DataService dataService;
+    DataService dataService;*/
 
     RobotCoreLoop robotCoreLoop;
 
     //Run after Spring context initialization
     public void onApplicationEvent(ContextRefreshedEvent event)
     {
-        QueueConsumer queueConsumer = new QueueConsumer(queueService);
+        QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender);
         new Thread(queueConsumer).start();
         terminalService.systemReady();
 
-        robotCoreLoop = new RobotCoreLoop();
+        robotCoreLoop = new RobotCoreLoop(queueService);
 
 
     }

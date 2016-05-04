@@ -13,16 +13,15 @@ import java.util.concurrent.BlockingQueue;
  */
 public class QueueConsumer implements Runnable
 {
-    @Autowired
-    CCommandSender sender;
-
+    private CCommandSender sender;
     private QueueService queueService;
 
     private BlockingQueue<String> jobQueue;
 
-    public QueueConsumer(QueueService queueService)
+    public  QueueConsumer(QueueService queueService, CCommandSender sender)
     {
         this.queueService = queueService;
+        this.sender = sender;
     }
 
     @Override
