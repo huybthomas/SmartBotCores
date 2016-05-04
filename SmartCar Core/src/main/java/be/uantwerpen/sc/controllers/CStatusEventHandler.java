@@ -36,8 +36,24 @@ public class CStatusEventHandler implements Runnable{
                 dIn.readFully(bytes);
                 String s = new String(bytes);
                 //TODO Continue this method
-                if (s.startsWith("")){
-
+                if (s.startsWith("READY FOR NEXT COMMAND")){
+                    synchronized (this){
+                        dataService.robotBusy = false;
+                    }
+                }if (s.startsWith("MILLIMETERS")){
+                    String millisString = s.split(" ", 2)[1];
+                    int millis = Integer.parseInt(millisString);
+                    dataService.setMillis(millis);
+                }if (s.startsWith("TAG_ID")){
+                    String tag = s.split(" ", 2)[1];
+                    synchronized (this){
+                        dataService.setTag(tag);
+                    }
+                }if (s.startsWith("TRAFFIC_LIGHT")){
+                    String trafficlightStatus = s.split(" ", 2)[1];
+                    synchronized (this){
+                        dataService.trafficLightStatus = trafficlightStatus;
+                    }
                 }
 
 
