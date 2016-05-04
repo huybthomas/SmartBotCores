@@ -115,6 +115,6 @@ public class TerminalService
         navigationParser.parseMap();*/
         IPathplanning pathplanning = new PathplanningService();
         NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),start,end));
-        navigationParser.parseMap();
+        System.out.println(navigationParser.parseMap().toString());
     }
 }
