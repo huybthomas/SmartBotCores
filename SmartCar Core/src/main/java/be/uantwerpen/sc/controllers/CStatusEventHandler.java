@@ -2,6 +2,7 @@ package be.uantwerpen.sc.controllers;
 
 import be.uantwerpen.sc.services.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.DataInputStream;
 import java.net.ServerSocket;
@@ -10,6 +11,7 @@ import java.net.Socket;
 /**
  * Created by Arthur on 4/05/2016.
  */
+@Service
 public class CStatusEventHandler implements Runnable{
 
     ServerSocket serverSocket;
