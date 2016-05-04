@@ -1,5 +1,6 @@
 package be.uantwerpen.sc.services;
 
+import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.CController;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.tools.IPathplanning;
@@ -68,6 +69,16 @@ public class TerminalService
                             terminal.printTerminal("Usage: navigate start end");
                         }
                     }
+                }catch(ArrayIndexOutOfBoundsException e){
+                    terminal.printTerminal("Usage: navigate start end");
+                }
+                break;
+            case "sendcommand":
+                try {
+                    String command2 = commandString.split(" ", 2)[1].toUpperCase();
+                    CCommandSender sender = new CCommandSender();
+                    Boolean response = sender.sendCommand(command2, "146.175.140.190");
+                    terminal.printTerminal(response.toString());
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
                 }
