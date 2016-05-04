@@ -34,7 +34,6 @@ public class RobotCoreLoop implements Runnable{
         this.queueService = queueService;
         this.mapController = mapController;
         start();
-        this.run();
     }
 
     private void start(){

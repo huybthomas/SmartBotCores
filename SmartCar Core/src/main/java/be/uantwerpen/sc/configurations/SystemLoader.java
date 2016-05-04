@@ -40,6 +40,7 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     {
         robotCoreLoop = new RobotCoreLoop(queueService, mapController);
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender);
+        new Thread(robotCoreLoop).start();
         new Thread(queueConsumer).start();
         terminalService.systemReady();
     }
