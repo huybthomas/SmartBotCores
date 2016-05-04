@@ -1,5 +1,6 @@
 package be.uantwerpen.sc.tools;
 
+import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.services.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ import java.util.concurrent.BlockingQueue;
  */
 public class QueueConsumer implements Runnable
 {
+    @Autowired
+    CCommandSender sender;
+
     private QueueService queueService;
 
     private BlockingQueue<String> jobQueue;
@@ -31,6 +35,10 @@ public class QueueConsumer implements Runnable
                     System.out.println("queue is empty");
                 }else{
                     System.out.println(queueService.getContentQueue().toString());
+                    synchronized (this) {
+                        String s = queueService.getJob();
+                        sender.sendCommand(s);
+                    }
                 }
                 //System.out.println("CrunchifyBlockingConsumer: Message - " + queueService.getJob() + " consumed.");
             } catch (Exception e) {

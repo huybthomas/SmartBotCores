@@ -1,5 +1,9 @@
 package be.uantwerpen.sc.configurations;
 
+import be.uantwerpen.sc.RobotCoreLoop;
+import be.uantwerpen.sc.controllers.CCommandSender;
+import be.uantwerpen.sc.controllers.CStatusEventHandler;
+import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.QueueService;
 import be.uantwerpen.sc.tools.QueueConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,14 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     TerminalService terminalService;
     @Autowired
     QueueService queueService;
+    @Autowired
+    CStatusEventHandler cStatusEventHandler;
+    @Autowired
+    CCommandSender cCommandSender;
+    @Autowired
+    DataService dataService;
+
+    RobotCoreLoop robotCoreLoop;
 
     //Run after Spring context initialization
     public void onApplicationEvent(ContextRefreshedEvent event)
@@ -26,5 +38,9 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
         QueueConsumer queueConsumer = new QueueConsumer(queueService);
         new Thread(queueConsumer).start();
         terminalService.systemReady();
+
+        robotCoreLoop = new RobotCoreLoop();
+
+
     }
 }
