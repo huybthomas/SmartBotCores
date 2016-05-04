@@ -12,6 +12,10 @@ public class DataService {
 
     private float millis;
 
+    public boolean robotBusy = false;
+
+    public String trafficLightStatus;
+
     private String tag;
 
     public float getMillis() {return millis;}
