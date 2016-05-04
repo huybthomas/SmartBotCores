@@ -50,7 +50,7 @@ public class MapController {
 
     @RequestMapping(method = RequestMethod.GET)
     public Map getMap(){
-        String coreIP = "http://146.175.140.117:1994";
+        String coreIP = "http://146.175.140.71:1994";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Map> responseList;
         responseList = restTemplate.getForEntity(coreIP.toString()+"/map/", Map.class);
@@ -60,7 +60,7 @@ public class MapController {
 
     @RequestMapping(value = "json", method = RequestMethod.GET)
     public MapJson getMapJson(){
-        String coreIP = "http://146.175.140.117:1994";
+        String coreIP = "http://146.175.140.71:1994";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<MapJson> responseList;
         responseList = restTemplate.getForEntity(coreIP.toString()+"/map/json", MapJson.class);
@@ -70,7 +70,7 @@ public class MapController {
 
     @RequestMapping(method = RequestMethod.GET ,value = "/map2/")
     public Vertex[] getPath(){
-        String coreIP = "http://146.175.140.117:1994";
+        String coreIP = "http://146.175.140.71:1994";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Vertex[]> responseList;
         responseList = restTemplate.getForEntity(coreIP.toString()+"/map/1/path/24", Vertex[].class);
