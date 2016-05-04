@@ -71,7 +71,7 @@ public class TerminalService
             case "sendcommand":
                 try {
                     String command2 = commandString.split(" ", 2)[1].toUpperCase();
-                    CCommandSender sender = new CCommandSender("146.175.140.190");
+                    CCommandSender sender = new CCommandSender();
                     Boolean response = sender.sendCommand(command2);
                     terminal.printTerminal(response.toString());
                 }catch(ArrayIndexOutOfBoundsException e){

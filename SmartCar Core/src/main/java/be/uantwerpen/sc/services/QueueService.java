@@ -1,5 +1,6 @@
 package be.uantwerpen.sc.services;
 
+import be.uantwerpen.sc.models.Job;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -12,6 +13,9 @@ import java.util.concurrent.BlockingQueue;
 public class QueueService {
 
     BlockingQueue<String> jobQueue = new ArrayBlockingQueue<>(10);
+
+    public QueueService() {
+    }
 
     public String getJob(){
         try {
