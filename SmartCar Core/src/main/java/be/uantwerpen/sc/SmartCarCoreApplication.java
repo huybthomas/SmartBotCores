@@ -13,7 +13,10 @@ public class SmartCarCoreApplication extends SpringBootServletInitializer
 {
 	public static void main(String[] args)
 	{
+
 		SpringApplication.run(SmartCarCoreApplication.class, args);
+
+
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package be.uantwerpen.sc.controllers;
 import be.uantwerpen.sc.tools.SocketReceiveThread;
 import be.uantwerpen.sc.tools.Terminal;
 import org.apache.catalina.Server;
+import org.springframework.stereotype.Service;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -15,15 +16,16 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by Arthur on 2/05/2016.
  */
+@Service
 public class CCommandSender {
 
     Socket socket;
     DataOutputStream dOut;
     DataInputStream dIn;
 
-    public CCommandSender(String ip){
+    public CCommandSender(){
         try{
-            socket = new Socket(ip, 1313);
+            socket = new Socket("localhost", 1313);
             socket.setSoTimeout(500);
             dOut = new DataOutputStream(socket.getOutputStream());
             dIn = new DataInputStream(socket.getInputStream());
