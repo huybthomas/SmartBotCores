@@ -1,17 +1,12 @@
 package be.uantwerpen.sc.services;
 
 import be.uantwerpen.sc.controllers.CCommandSender;
-import be.uantwerpen.sc.controllers.CController;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.tools.IPathplanning;
 import be.uantwerpen.sc.tools.NavigationParser;
 import be.uantwerpen.sc.tools.Terminal;
-import be.uantwerpen.sc.tools.Vertex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Thomas on 14/04/2016.
@@ -76,8 +71,8 @@ public class TerminalService
             case "sendcommand":
                 try {
                     String command2 = commandString.split(" ", 2)[1].toUpperCase();
-                    CCommandSender sender = new CCommandSender();
-                    Boolean response = sender.sendCommand(command2, "146.175.140.190");
+                    CCommandSender sender = new CCommandSender("146.175.140.190");
+                    Boolean response = sender.sendCommand(command2);
                     terminal.printTerminal(response.toString());
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");

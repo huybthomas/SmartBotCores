@@ -17,11 +17,22 @@ import java.nio.charset.StandardCharsets;
  */
 public class CCommandSender {
 
-    public CCommandSender(){
+    Socket socket;
+    DataOutputStream dOut;
+    DataInputStream dIn;
 
+    public CCommandSender(String ip){
+        try{
+            socket = new Socket(ip, 1313);
+            socket.setSoTimeout(500);
+            dOut = new DataOutputStream(socket.getOutputStream());
+            dIn = new DataInputStream(socket.getInputStream());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public boolean sendCommand(String str , String ip){
+    public boolean sendCommand(String str){
         try {
             //byte[] message = str.getBytes();
             //System.out.println(message.toString());
@@ -30,48 +41,23 @@ public class CCommandSender {
             str = str.concat("\n");
             byte[] bytes = str.getBytes();
 
-            //Open Sockets
-            Socket socket = new Socket(ip, 1313);
-            socket.setSoTimeout(500);
-            DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
-            DataInputStream dIn = new DataInputStream(socket.getInputStream());
-
             while(attempts <5) {
-                /*//Wait for #
-                try {
-                    socket.setSoTimeout(2000);
-                    while (!dIn.readUTF().contains("#")) {
-                    }
-                }catch(SocketTimeoutException e){
-                    //Just try again
-                }*/
-
-                //Setup Ack receiver
-                //ServerSocket serverSocket = new ServerSocket(1313);
-                //SocketReceiveThread receiver = new SocketReceiveThread(serverSocket);
-                //receiver.start();
-
                 //Send message
                 //dOut.writeInt(message.length); // write length of the message
                 dOut.flush();
-                //dOut.writeUTF(str);
                 dOut.write(bytes);
-                //dOut.write(str);       // write the message
 
                 //Receive Message
-                //Use this before if it doesnt work?
                 try {
                     //Check if acknowledged
                     byte[] ackBytes = new byte[4];
                     dIn.readFully(ackBytes);
                     String response = new String(ackBytes);
                     Terminal.printTerminal("Response:" + response);
-                    if(response.startsWith("ACK")){
+                    if(response.startsWith("ACK")  || response.startsWith("Smar")){
                         //Message acknowledged
-                        socket.close();
                         return true;
                     }if(response.startsWith("NACK")){
-                        socket.close();
                         return false;
                     }
 
@@ -80,10 +66,6 @@ public class CCommandSender {
                         byte[] removed = new byte[dIn.available()];
                         dIn.readFully(removed);
                     }
-
-
-
-
                 }catch(SocketTimeoutException e){
                     Terminal.printTerminalInfo("SocketTimeout");
                     e.printStackTrace();
@@ -91,9 +73,6 @@ public class CCommandSender {
                 attempts++;
             }
 
-            //Close all
-
-            socket.close();
             return false;
 
         } catch (IOException e) {
@@ -101,5 +80,17 @@ public class CCommandSender {
             Terminal.printTerminalInfo("IOException");
             return false;
         }
+    }
+
+    public boolean close(){
+        try{
+            socket.close();
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+
     }
 }
