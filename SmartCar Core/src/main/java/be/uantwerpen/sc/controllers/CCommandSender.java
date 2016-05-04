@@ -30,6 +30,17 @@ public class CCommandSender {
         }
     }
 
+    public CCommandSender(String ip){
+        try{
+            socket = new Socket(ip, 1313);
+            socket.setSoTimeout(500);
+            dOut = new DataOutputStream(socket.getOutputStream());
+            dIn = new DataInputStream(socket.getInputStream());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public boolean sendCommand(String str){
         try {
             //byte[] message = str.getBytes();
