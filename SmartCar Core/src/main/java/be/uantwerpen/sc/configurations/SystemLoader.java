@@ -3,6 +3,7 @@ package be.uantwerpen.sc.configurations;
 import be.uantwerpen.sc.RobotCoreLoop;
 import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.CStatusEventHandler;
+import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.QueueService;
 import be.uantwerpen.sc.tools.QueueConsumer;
@@ -25,6 +26,8 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     QueueService queueService;
     @Autowired
     CCommandSender cCommandSender;
+    @Autowired
+    MapController mapController;
     /*@Autowired
     CStatusEventHandler cStatusEventHandler;
     @Autowired
@@ -35,12 +38,9 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     //Run after Spring context initialization
     public void onApplicationEvent(ContextRefreshedEvent event)
     {
+        robotCoreLoop = new RobotCoreLoop(queueService, mapController);
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender);
         new Thread(queueConsumer).start();
         terminalService.systemReady();
-
-        robotCoreLoop = new RobotCoreLoop(queueService);
-
-
     }
 }

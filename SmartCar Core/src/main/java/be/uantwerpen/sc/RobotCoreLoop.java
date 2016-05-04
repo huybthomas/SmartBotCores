@@ -28,11 +28,11 @@ public class RobotCoreLoop implements Runnable{
     CCommandSender cCommandSender;
     @Autowired
     DataService dataService;
-    @Autowired
-    MapController mapController;
+    private MapController mapController;
 
-    public RobotCoreLoop(QueueService queueService){
+    public RobotCoreLoop(QueueService queueService,MapController mapController){
         this.queueService = queueService;
+        this.mapController = mapController;
         start();
         this.run();
     }
