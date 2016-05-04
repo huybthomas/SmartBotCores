@@ -1,17 +1,13 @@
 package be.uantwerpen.sc.controllers;
 
-import be.uantwerpen.sc.tools.SocketReceiveThread;
 import be.uantwerpen.sc.tools.Terminal;
-import org.apache.catalina.Server;
 import org.springframework.stereotype.Service;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Created by Arthur on 2/05/2016.
