@@ -42,12 +42,30 @@ public class CStatusEventHandler implements Runnable{
                     synchronized (this){
                         dataService.robotBusy = false;
                     }
-                }if (s.startsWith("MILLIMETERS")){
-                    String millisString = s.split(" ", 2)[1];
+                }if (s.startsWith("TRAFFICLIGHT DETECTION EVENT")){
+                    String statusString = s.split(":", 2)[1];
+                    String status = "";
+                    if(statusString.contains("GREEN")){
+                        status = "GREEN";
+                    }
+                    if(statusString.contains("RED")){
+                        status = "RED";
+                    }
+                    if(statusString.contains("NONE")){
+                        status = "NONE";
+                    }
+                    synchronized (this) {
+                        dataService.trafficLightStatus = status;
+                    }
+                }
+                if (s.startsWith("MILLIMETERS")){
+                    String millisString = s.split(":", 2)[1];
                     int millis = Integer.parseInt(millisString);
-                    dataService.setMillis(millis);
-                }if (s.startsWith("TAG_ID")){
-                    String tag = s.split(" ", 2)[1];
+                    synchronized (this) {
+                        dataService.setMillis(millis);
+                    }
+                }if (s.startsWith("TAG READ UID EVENT")){
+                    String tag = s.split(":", 2)[1];
                     synchronized (this){
                         dataService.setTag(tag);
                     }
