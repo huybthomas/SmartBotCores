@@ -7,10 +7,7 @@ import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.PathplanningService;
 import be.uantwerpen.sc.services.QueueService;
 import be.uantwerpen.sc.services.TerminalService;
-import be.uantwerpen.sc.tools.DriveDir;
-import be.uantwerpen.sc.tools.IPathplanning;
-import be.uantwerpen.sc.tools.NavigationParser;
-import be.uantwerpen.sc.tools.Terminal;
+import be.uantwerpen.sc.tools.*;
 import org.apache.tomcat.jni.Thread;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,10 +26,19 @@ public class RobotCoreLoop implements Runnable{
     @Autowired
     DataService dataService;
     private MapController mapController;
+    @Autowired
+    private PathplanningType pathplanningType;
 
-    public RobotCoreLoop(QueueService queueService,MapController mapController){
+    private IPathplanning pathplanning;
+
+    public RobotCoreLoop(QueueService queueService,MapController mapController, PathplanningType pathplanningType){
         this.queueService = queueService;
         this.mapController = mapController;
+        this.pathplanningType = pathplanningType;
+        //Setup type
+        Terminal.printTerminalInfo(pathplanningType.getType().name());
+
+        //Start driving
         start();
     }
 
@@ -44,12 +50,19 @@ public class RobotCoreLoop implements Runnable{
 
         //TODO Update location on server (Also on DataService)
 
-        IPathplanning pathplanning = new PathplanningService();
+        //Setup interface for correct mode
+        setupInterface();
+
+        //Use pathplanning (Described in Interface)
         NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),23,18));
         for (DriveDir command : navigationParser.parseMap()){
             queueService.insertJob(command.toString());
         }
         Terminal.printTerminal(navigationParser.parseMap().toString());
+    }
+
+    private void setupInterface(){
+        pathplanning = new PathplanningService();
     }
 
     @Override
