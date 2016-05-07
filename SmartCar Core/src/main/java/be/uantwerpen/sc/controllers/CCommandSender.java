@@ -21,7 +21,7 @@ public class CCommandSender {
 
     public CCommandSender(){
         try{
-            socket = new Socket("localhost", 1313);
+            socket = new Socket("146.175.140.190", 1313);
             socket.setSoTimeout(500);
             dOut = new DataOutputStream(socket.getOutputStream());
             dIn = new DataInputStream(socket.getInputStream());
@@ -50,12 +50,12 @@ public class CCommandSender {
             str = str.concat("\n");
             byte[] bytes = str.getBytes();
 
-            while(attempts <5) {
+            //while(attempts <5) {
                 //Send message
                 //dOut.writeInt(message.length); // write length of the message
                 dOut.flush();
                 dOut.write(bytes);
-
+                /*
                 //Receive Message
                 try {
                     //Check if acknowledged
@@ -80,9 +80,10 @@ public class CCommandSender {
                     e.printStackTrace();
                 }
                 attempts++;
-            }
+                */
+            //}
 
-            return false;
+            return true;
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -6,6 +6,7 @@ import be.uantwerpen.sc.tools.IPathplanning;
 import be.uantwerpen.sc.tools.NavigationParser;
 import be.uantwerpen.sc.tools.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
 /**

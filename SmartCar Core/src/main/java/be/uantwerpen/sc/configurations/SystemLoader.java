@@ -6,7 +6,6 @@ import be.uantwerpen.sc.controllers.CStatusEventHandler;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.QueueService;
-import be.uantwerpen.sc.tools.PathplanningType;
 import be.uantwerpen.sc.tools.QueueConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -31,6 +30,10 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     MapController mapController;
     @Autowired
     private PathplanningType pathplanningType;
+    @Autowired
+    CStatusEventHandler cStatusEventHandler;
+    @Autowired
+    DataService dataService;
     /*@Autowired
     CStatusEventHandler cStatusEventHandler;
     @Autowired
@@ -44,6 +47,7 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
         robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathplanningType);
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender);
         new Thread(robotCoreLoop).start();
+        new Thread(cStatusEventHandler).start();
         new Thread(queueConsumer).start();
         terminalService.systemReady();
     }

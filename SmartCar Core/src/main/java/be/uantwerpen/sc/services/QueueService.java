@@ -1,6 +1,7 @@
 package be.uantwerpen.sc.services;
 
 import be.uantwerpen.sc.models.Job;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -12,7 +13,7 @@ import java.util.concurrent.BlockingQueue;
 @Service
 public class QueueService {
 
-    BlockingQueue<String> jobQueue = new ArrayBlockingQueue<>(10);
+    BlockingQueue<String> jobQueue = new ArrayBlockingQueue<>(100);
 
     public QueueService() {
     }

@@ -37,8 +37,9 @@ public class CStatusEventHandler implements Runnable{
                 byte[] bytes = new byte[1024];
                 dIn.readFully(bytes);
                 String s = new String(bytes);
+                System.out.println(s);
                 //TODO Continue this method
-                if (s.startsWith("READY FOR NEXT COMMAND")){
+                if (s.startsWith("DRIVE EVENT: FINISHED")){
                     synchronized (this){
                         dataService.robotBusy = false;
                     }
