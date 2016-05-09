@@ -37,6 +37,7 @@ public class QueueConsumer implements Runnable
                     System.out.println("queue is empty");
                 }else{
                     //System.out.println(queueService.getContentQueue().toString());
+                    //Wait until robot not busy
                     synchronized (this) {
                         if(!dataService.robotBusy) {
                             String s = queueService.getJob();

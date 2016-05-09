@@ -21,23 +21,14 @@ public class PathplanningType {
         // if run with "--debug logfile.txt" debug=true, files=["logfile.txt"]
         if(files.isEmpty()){
             type = PathplanningEnum.TERMINAL;
-            System.out.println();
-            System.out.print("Terminal");
-            System.out.println();
         }else{
             switch (files.get(0).toLowerCase()){
                 case "dijkstra":
                     type = PathplanningEnum.DIJKSTRA;
-                    System.out.println();
-                    System.out.println("Dijkstra");
-                    System.out.println();
                     break;
                 default:
                     //run default
                     type = PathplanningEnum.TERMINAL;
-                    System.out.println();
-                    System.out.print("Terminal");
-                    System.out.println();
             }
         }
     }
