@@ -22,6 +22,8 @@ public class TerminalService
     private MapController mapController;
     @Autowired
     private PathController pathController;
+    @Autowired
+    private CCommandSender sender;
 
     public TerminalService()
     {
@@ -100,9 +102,15 @@ public class TerminalService
             case "sendcommand":
                 try {
                     String command2 = commandString.split(" ", 2)[1].toUpperCase();
-                    CCommandSender sender = new CCommandSender();
-                    Boolean response = sender.sendCommand(command2);
-                    terminal.printTerminal(response.toString());
+                    sender.sendCommand(command2);
+                }catch(ArrayIndexOutOfBoundsException e){
+                    terminal.printTerminal("Usage: navigate start end");
+                }
+                break;
+            case "doMusic":
+                try {
+                    sender.sendCommand("DRIVE FOLLOWLINE");
+                    sender.sendCommand("SPEAKER PLAY cantina");
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
                 }
