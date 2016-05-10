@@ -5,6 +5,7 @@ import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.tools.IPathplanning;
 import be.uantwerpen.sc.tools.NavigationParser;
 import be.uantwerpen.sc.tools.Terminal;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.CCSTATE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class TerminalService
     private Terminal terminal;
     @Autowired
     private MapController mapController;
+    @Autowired
+    private CCommandSender sender;
 
     public TerminalService()
     {
@@ -72,9 +75,15 @@ public class TerminalService
             case "sendcommand":
                 try {
                     String command2 = commandString.split(" ", 2)[1].toUpperCase();
-                    CCommandSender sender = new CCommandSender();
-                    Boolean response = sender.sendCommand(command2);
-                    terminal.printTerminal(response.toString());
+                    sender.sendCommand(command2);
+                }catch(ArrayIndexOutOfBoundsException e){
+                    terminal.printTerminal("Usage: navigate start end");
+                }
+                break;
+            case "doMusic":
+                try {
+                    sender.sendCommand("DRIVE FOLLOWLINE");
+                    sender.sendCommand("SPEAKER PLAY cantina");
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
                 }
