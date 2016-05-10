@@ -2,6 +2,8 @@ package be.uantwerpen.sc.services;
 
 import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.MapController;
+import be.uantwerpen.sc.controllers.PathController;
+import be.uantwerpen.sc.models.map.Path;
 import be.uantwerpen.sc.tools.IPathplanning;
 import be.uantwerpen.sc.tools.NavigationParser;
 import be.uantwerpen.sc.tools.Terminal;
@@ -18,6 +20,8 @@ public class TerminalService
     private Terminal terminal;
     @Autowired
     private MapController mapController;
+    @Autowired
+    private PathController pathController;
 
     public TerminalService()
     {
@@ -69,6 +73,30 @@ public class TerminalService
                     terminal.printTerminal("Usage: navigate start end");
                 }
                 break;
+            case "path":
+                try {
+                    String command2 = commandString.split(" ", 2)[1].toLowerCase();
+
+                    String start = command2.split(" ", 2)[0].toLowerCase();
+                    String end = command2.split(" ", 2)[1].toLowerCase();
+                    if (start == end) {
+                        terminal.printTerminal("Start cannot equal end.");
+                    } else if (start == "" || end == "") {
+                        terminal.printTerminal("Usage: navigate start end");
+                    } else {
+                        try {
+                            int startInt = Integer.parseInt(start);
+                            int endInt = Integer.parseInt(end);
+                            getPath(startInt, endInt);
+                        } catch (NumberFormatException e) {
+                            terminal.printTerminalError(e.getMessage());
+                            terminal.printTerminal("Usage: navigate start end");
+                        }
+                    }
+                }catch(ArrayIndexOutOfBoundsException e){
+                    terminal.printTerminal("Usage: navigate start end");
+                }
+                break;
             case "sendcommand":
                 try {
                     String command2 = commandString.split(" ", 2)[1].toUpperCase();
@@ -105,6 +133,7 @@ public class TerminalService
                 terminal.printTerminal("Available commands:");
                 terminal.printTerminal("-------------------");
                 terminal.printTerminal("'navigate {start} {end}': navigates the robot from point {start} to {end}");
+                terminal.printTerminal("'navigate {start} {end}': get the path from the server");
                 terminal.printTerminal("'exit' : shutdown the core.");
                 terminal.printTerminal("'help' / '?' : show all available commands.\n");
                 break;
@@ -123,5 +152,10 @@ public class TerminalService
         IPathplanning pathplanning = new PathplanningService();
         NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),start,end));
         System.out.println(navigationParser.parseMap().toString());
+    }
+
+    private void getPath(int start, int end){
+        Path path = pathController.getPath(start, end);
+        System.out.println(path.toString());
     }
 }

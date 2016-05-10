@@ -45,11 +45,11 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     //Run after Spring context initialization
     public void onApplicationEvent(ContextRefreshedEvent event)
     {
-        robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathplanningType);
+      /*  robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathplanningType);
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
         new Thread(robotCoreLoop).start();
         new Thread(cStatusEventHandler).start();
-        new Thread(queueConsumer).start();
+        new Thread(queueConsumer).start();*/
         terminalService.systemReady();
     }
 }
