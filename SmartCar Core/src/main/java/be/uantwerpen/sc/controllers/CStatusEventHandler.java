@@ -1,6 +1,7 @@
 package be.uantwerpen.sc.controllers;
 
 import be.uantwerpen.sc.services.DataService;
+import be.uantwerpen.sc.tools.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +15,17 @@ import java.net.Socket;
 @Service
 public class CStatusEventHandler implements Runnable{
 
-    ServerSocket serverSocket;
     Socket socket;
     DataInputStream dIn;
     @Autowired
     DataService dataService;
+    @Autowired
+    mqttLocationPublisher locationPublisher;
 
     public CStatusEventHandler(){
         try{
-            serverSocket = new ServerSocket(1314);
+            socket = new Socket("146.175.140.190", 1314);
+            dIn = new DataInputStream(socket.getInputStream());
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -32,12 +35,9 @@ public class CStatusEventHandler implements Runnable{
     public void run() {
         while(!Thread.currentThread().isInterrupted()){
             try {
-                socket = serverSocket.accept();
-                DataInputStream dIn = new DataInputStream(socket.getInputStream());
-                byte[] bytes = new byte[1024];
-                dIn.readFully(bytes);
+                byte[] bytes = readData();
                 String s = new String(bytes);
-                System.out.println(s);
+                //System.out.println(s);
                 //TODO Continue this method
                 if (s.startsWith("DRIVE EVENT: FINISHED")){
                     synchronized (this){
@@ -59,16 +59,19 @@ public class CStatusEventHandler implements Runnable{
                         dataService.trafficLightStatus = status;
                     }
                 }
-                if (s.startsWith("MILLIMETERS")){
-                    String millisString = s.split(":", 2)[1];
+                if (s.startsWith("TRAVEL DISTANCE EVENT")){
+                    String millisString = s.split(":", 2)[1].trim();
                     int millis = Integer.parseInt(millisString);
                     synchronized (this) {
+                        Terminal.printTerminal("Distance: " + millis);
                         dataService.setMillis(millis);
+                        locationPublisher.publishLocation(millis);
                     }
-                }if (s.startsWith("TAG READ UID EVENT")){
+                }if (s.startsWith("TAG DETECTION EVENT")){
                     String tag = s.split(":", 2)[1];
                     synchronized (this){
                         dataService.setTag(tag);
+                        dataService.robotBusy = false;
                     }
                 }if (s.startsWith("TRAFFIC_LIGHT")){
                     String trafficlightStatus = s.split(" ", 2)[1];
@@ -76,21 +79,37 @@ public class CStatusEventHandler implements Runnable{
                         dataService.trafficLightStatus = trafficlightStatus;
                     }
                 }
-
-
             }catch(Exception e){
                 e.printStackTrace();
             }
-
-
-
         }
 
         try{
             socket.close();
-            serverSocket.close();
+
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private byte[] readData(){
+        byte[] bytes = new byte[1024];
+        try {
+            byte b = dIn.readByte();
+            char c = ((char) b);
+            int i = 0;
+            while (c != '\n') {
+                //Terminal.printTerminal("" + c);
+                bytes[i] = b;
+                i++;
+                b = dIn.readByte();
+                c = ((char) b);
+            }
+            bytes[i-1] = '\0';
+            return bytes;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return bytes;
     }
 }

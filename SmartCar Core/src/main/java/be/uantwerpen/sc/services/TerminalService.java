@@ -4,6 +4,7 @@ import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.controllers.PathController;
 import be.uantwerpen.sc.models.map.Path;
+import be.uantwerpen.sc.tools.DriveDir;
 import be.uantwerpen.sc.tools.IPathplanning;
 import be.uantwerpen.sc.tools.NavigationParser;
 import be.uantwerpen.sc.tools.Terminal;
@@ -24,6 +25,8 @@ public class TerminalService
     private PathController pathController;
     @Autowired
     private CCommandSender sender;
+    @Autowired
+    private QueueService queueService;
 
     public TerminalService()
     {
@@ -107,9 +110,16 @@ public class TerminalService
                     terminal.printTerminal("Usage: navigate start end");
                 }
                 break;
-            case "doMusic":
+            case "domusic":
                 try {
-                    sender.sendCommand("DRIVE FOLLOWLINE");
+                    //sender.sendCommand("DRIVE FOLLOWLINE");
+                    sender.sendCommand("SPEAKER UNMUTE");
+                    sender.sendCommand("SPEAKER PLAY QMusic");
+                    try{
+                        Thread.sleep(1000);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     sender.sendCommand("SPEAKER PLAY cantina");
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
@@ -159,6 +169,9 @@ public class TerminalService
         navigationParser.parseMap();*/
         IPathplanning pathplanning = new PathplanningService();
         NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),start,end));
+        for (DriveDir command : navigationParser.parseMap()){
+            queueService.insertJob(command.toString());
+        }
         System.out.println(navigationParser.parseMap().toString());
     }
 
