@@ -23,7 +23,7 @@ public class mqttLocationPublisher {
         String topic        = "BOT/" + dataService.getRobotID() + "/Location";
         String content      = location.toString();
         int qos             = 2;
-        String broker       = "tcp://146.175.140.100:1883";
+        String broker       = "tcp://146.175.139.63:1883";
         String clientId     = dataService.getRobotID().toString();
         MemoryPersistence persistence = new MemoryPersistence();
 
@@ -43,13 +43,12 @@ public class mqttLocationPublisher {
             System.out.println("Message published");
             sampleClient.disconnect();
             System.out.println("Disconnected");
-            System.exit(0);
         } catch(MqttException me) {
-            System.out.println("reason "+me.getReasonCode());
-            System.out.println("msg "+me.getMessage());
-            System.out.println("loc "+me.getLocalizedMessage());
-            System.out.println("cause "+me.getCause());
-            System.out.println("excep "+me);
+            System.out.println("reason " + me.getReasonCode());
+            System.out.println("msg " + me.getMessage());
+            System.out.println("loc " + me.getLocalizedMessage());
+            System.out.println("cause " + me.getCause());
+            System.out.println("excep " + me);
             me.printStackTrace();
         }
     }

@@ -2,6 +2,7 @@ package be.uantwerpen.sc.configurations;
 
 import be.uantwerpen.sc.RobotCoreLoop;
 import be.uantwerpen.sc.controllers.CCommandSender;
+import be.uantwerpen.sc.controllers.CLocationPoller;
 import be.uantwerpen.sc.controllers.CStatusEventHandler;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.services.DataService;
@@ -45,11 +46,13 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     //Run after Spring context initialization
     public void onApplicationEvent(ContextRefreshedEvent event)
     {
-        robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathplanningType);
+        robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathplanningType, dataService);
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
+        CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
         new Thread(robotCoreLoop).start();
         new Thread(cStatusEventHandler).start();
         new Thread(queueConsumer).start();
+        new Thread(cLocationPoller).start();
         terminalService.systemReady();
     }
 }

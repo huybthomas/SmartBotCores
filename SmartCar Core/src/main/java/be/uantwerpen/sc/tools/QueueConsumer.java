@@ -34,7 +34,7 @@ public class QueueConsumer implements Runnable
                 //System.out.println("Consimer wants to consume");
                 Thread.sleep(10);
                 if(queueService.getContentQueue().size() == 0){
-                    System.out.println("queue is empty");
+                    //System.out.println("queue is empty");
                 }else{
                     //System.out.println(queueService.getContentQueue().toString());
                     //Wait until robot not busy
@@ -42,7 +42,9 @@ public class QueueConsumer implements Runnable
                         if(!dataService.robotBusy) {
                             String s = queueService.getJob();
                             sender.sendCommand(s);
-                            dataService.robotBusy = true;
+                            if(!s.contains("DRIVE DISTANCE")) {
+                                dataService.robotBusy = true;
+                            }
                         }
                     }
                 }

@@ -8,6 +8,7 @@ import be.uantwerpen.sc.services.PathplanningService;
 import be.uantwerpen.sc.services.QueueService;
 import be.uantwerpen.sc.services.TerminalService;
 import be.uantwerpen.sc.tools.*;
+import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,29 +32,33 @@ public class RobotCoreLoop implements Runnable{
 
     private IPathplanning pathplanning;
 
-    private String serverIP = "unknown";
+    private String serverIP = "146.175.140.118:1994";
 
-    public RobotCoreLoop(QueueService queueService,MapController mapController, PathplanningType pathplanningType){
+    public RobotCoreLoop(QueueService queueService, MapController mapController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;
         this.mapController = mapController;
         this.pathplanningType = pathplanningType;
+        this.dataService = dataService;
         //Setup type
         Terminal.printTerminalInfo("Selected PathplanningType: " + pathplanningType.getType().name());
-
-        //Start driving
-        start();
     }
 
-    private void start(){
+    public void run(){
         //getRobotId
         RestTemplate restTemplate = new RestTemplate();
-        Long robotID = restTemplate.getForObject("http://" + serverIP + "/newRobot", Long.class);
+        Long robotID = restTemplate.getForObject("http://" + serverIP + "/bot/newRobot", Long.class);
         dataService.setRobotID(robotID);
 
+        Terminal.printTerminal("Got ID: " + robotID);
+
         //Drive forward
-        queueService.insertJob("DRIVE FOLLOWLINE\n");
+        synchronized (this) {
+            queueService.insertJob("DRIVE FOLLOWLINE");
+        }
         //Read tag
-        queueService.insertJob("TAG READ UID\n");
+        synchronized (this) {
+            queueService.insertJob("TAG READ UID");
+        }
         //Wait for tag read
         synchronized (this) {
             while (dataService.getTag().equals("NO_TAG")) {
@@ -65,16 +70,22 @@ public class RobotCoreLoop implements Runnable{
             }
         }
 
+        Terminal.printTerminal("Tag: " + dataService.getTag());
+
         updateStartLocation();
+        Terminal.printTerminal("Start Location: " + dataService.getCurrentLocation());
+
         //TODO Update location on server (Also on DataService)
 
         //Setup interface for correct mode
         setupInterface();
 
         //Use pathplanning (Described in Interface)
-        NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),23,18));
+        NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),15,6));
         for (DriveDir command : navigationParser.parseMap()){
-            queueService.insertJob(command.toString());
+            synchronized (this) {
+                queueService.insertJob(command.toString());
+            }
         }
         Terminal.printTerminal(navigationParser.parseMap().toString());
     }
@@ -84,7 +95,7 @@ public class RobotCoreLoop implements Runnable{
     }
 
     private void updateStartLocation(){
-        switch(dataService.getTag()){
+        switch(dataService.getTag().trim()){
             case "04 67 88 8A C8 48 80":
                 dataService.setCurrentLocation(2);
                 break;
@@ -136,13 +147,6 @@ public class RobotCoreLoop implements Runnable{
             default:
                 dataService.setCurrentLocation(-1);
                 break;
-        }
-    }
-
-    @Override
-    public void run(){
-        while(!java.lang.Thread.currentThread().isInterrupted()) {
-
         }
     }
 }
