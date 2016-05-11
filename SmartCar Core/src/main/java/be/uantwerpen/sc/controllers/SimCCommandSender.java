@@ -3,42 +3,26 @@ package be.uantwerpen.sc.controllers;
 import be.uantwerpen.sc.tools.Terminal;
 import org.springframework.stereotype.Service;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 /**
- * Created by Arthur on 2/05/2016.
+ * Created by Niels on 11/05/2016.
  */
 @Service
-public class CCommandSender {
-
+public class SimCCommandSender {
     Socket socket;
     DataOutputStream dOut;
     DataInputStream dIn;
-    private boolean serverActive;
+    BufferedWriter writer;
 
-    public CCommandSender(){
+    public SimCCommandSender(){
         try{
-            socket = new Socket("146.175.140.190", 1313);
-            socket.setSoTimeout(500);
+            socket = new Socket("localhost", 5555);
+            socket.setSoTimeout(1000);
             dOut = new DataOutputStream(socket.getOutputStream());
             dIn = new DataInputStream(socket.getInputStream());
-            serverActive = true;
-        }catch(Exception e) {
-            e.printStackTrace();
-            serverActive = false;
-        }
-    }
-
-    public CCommandSender(String ip){
-        try{
-            socket = new Socket(ip, 1313);
-            socket.setSoTimeout(500);
-            dOut = new DataOutputStream(socket.getOutputStream());
-            dIn = new DataInputStream(socket.getInputStream());
+            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -46,18 +30,20 @@ public class CCommandSender {
 
     public boolean sendCommand(String str){
         try {
+            writer.write(str+"\r\n");
+            writer.flush();
             //byte[] message = str.getBytes();
             //System.out.println(message.toString());
-            int attempts = 0;
-
-            str = str.concat("\n");
-            byte[] bytes = str.getBytes();
-
-            //while(attempts <5) {
-                //Send message
-                //dOut.writeInt(message.length); // write length of the message
-                dOut.flush();
-                dOut.write(bytes);
+//            int attempts = 0;
+//
+//            str = str.concat("\n");
+//            byte[] bytes = str.getBytes();
+//
+//            //while(attempts <5) {
+//            //Send message
+//            //dOut.writeInt(message.length); // write length of the message
+//            dOut.flush();
+//            dOut.write(bytes);
 //                /*
 //                //Receive Message
 //                try {
@@ -85,7 +71,6 @@ public class CCommandSender {
 //                attempts++;
 //                */
 //            //}
-
             return true;
 
         } catch (IOException e) {

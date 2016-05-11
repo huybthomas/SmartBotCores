@@ -27,6 +27,8 @@ public class TerminalService
     private CCommandSender sender;
     @Autowired
     private QueueService queueService;
+    @Autowired
+    private SimulationService simulationService;
 
     public TerminalService()
     {
@@ -44,7 +46,7 @@ public class TerminalService
     {
         terminal.printTerminal(" :: SmartCar Core - 2016 ::  -  Developed by: Huybrechts T., Janssens A., Joosens D., Vervliet N.");
         terminal.printTerminal("Type 'help' to display the possible commands.");
-
+        simulationService.setActiveSimulator(false);
         terminal.activateTerminal();
     }
 
@@ -125,6 +127,24 @@ public class TerminalService
                     terminal.printTerminal("Usage: navigate start end");
                 }
                 break;
+            case "simulate":
+                try {
+                    String command2 = commandString.split(" ", 2)[1].toLowerCase();
+                    if(command2.equals("true"))
+                        simulationService.setActiveSimulator(true);
+                    else
+                        simulationService.setActiveSimulator(false);
+                }catch(ArrayIndexOutOfBoundsException e){
+                    terminal.printTerminal("error");
+                }
+                break;
+            case "checkqueue":
+                try {
+                    System.out.println(queueService.getContentQueue().toString());
+                }catch(ArrayIndexOutOfBoundsException e){
+                    terminal.printTerminal("error");
+                }
+                break;
             case "exit":
                 exitSystem();
                 break;
@@ -151,7 +171,9 @@ public class TerminalService
                 terminal.printTerminal("Available commands:");
                 terminal.printTerminal("-------------------");
                 terminal.printTerminal("'navigate {start} {end}': navigates the robot from point {start} to {end}");
-                terminal.printTerminal("'navigate {start} {end}': get the path from the server");
+                terminal.printTerminal("'path {start} {end}': get the path from the server");
+                terminal.printTerminal("'simulate {true/false}': activate he simulator");
+                terminal.printTerminal("'checkQueue': check content of the queue");
                 terminal.printTerminal("'exit' : shutdown the core.");
                 terminal.printTerminal("'help' / '?' : show all available commands.\n");
                 break;

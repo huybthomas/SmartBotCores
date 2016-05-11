@@ -32,7 +32,8 @@ public class RobotCoreLoop implements Runnable{
 
     private IPathplanning pathplanning;
 
-    private String serverIP = "146.175.140.118:1994";
+    //private String serverIP = "146.175.140.118:1994";
+    private String serverIP = "localhost:1994";
 
     public RobotCoreLoop(QueueService queueService, MapController mapController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;
