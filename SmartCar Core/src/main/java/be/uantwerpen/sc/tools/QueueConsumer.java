@@ -1,8 +1,10 @@
 package be.uantwerpen.sc.tools;
 
 import be.uantwerpen.sc.controllers.CCommandSender;
+import be.uantwerpen.sc.controllers.SimCCommandSender;
 import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.QueueService;
+import be.uantwerpen.sc.services.SimulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +19,18 @@ public class QueueConsumer implements Runnable
     private CCommandSender sender;
     private QueueService queueService;
     private DataService dataService;
+    private SimulationService simulationService;
+    private SimCCommandSender simCCommandSender;
 
     private BlockingQueue<String> jobQueue;
 
-    public  QueueConsumer(QueueService queueService, CCommandSender sender, DataService dataService)
+    public  QueueConsumer(QueueService queueService, CCommandSender sender, DataService dataService,SimCCommandSender simCCommandSender, SimulationService simulationService)
     {
         this.queueService = queueService;
         this.sender = sender;
         this.dataService = dataService;
+        this.simCCommandSender = simCCommandSender;
+        this.simulationService = simulationService;
     }
 
     @Override
@@ -40,10 +46,15 @@ public class QueueConsumer implements Runnable
                     //Wait until robot not busy
                     synchronized (this) {
                         if(!dataService.robotBusy) {
-                            String s = queueService.getJob();
-                            sender.sendCommand(s);
-                            if(!s.contains("DRIVE DISTANCE")) {
-                                dataService.robotBusy = true;
+                            if(simulationService.isActiveSimulator()){
+                                String s = queueService.getJob();
+                                simCCommandSender.sendCommand(s);
+                            }else{
+                                String s = queueService.getJob();
+                                sender.sendCommand(s);
+                                if(!s.contains("DRIVE DISTANCE")) {
+                                    dataService.robotBusy = true;
+                                }
                             }
                             if(s.contains("DRIVE FOLLOWLINE")){
                                 //Next Link
