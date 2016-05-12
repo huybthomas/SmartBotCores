@@ -37,7 +37,7 @@ public class mqttLocationPublisher {
                 //System.out.println("Connecting to broker: "+broker);
                 client.connect(connOpts);
                 //System.out.println("Connected");
-                System.out.println("Publishing message: " + content);
+                //System.out.println("Publishing message: " + content);
                 MqttMessage message = new MqttMessage(content.getBytes());
                 message.setQos(qos);
                 client.publish(topic, message);

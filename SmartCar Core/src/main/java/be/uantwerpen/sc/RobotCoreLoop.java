@@ -82,7 +82,7 @@ public class RobotCoreLoop implements Runnable{
 
         //Use pathplanning (Described in Interface)
         dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(),6));
-        Terminal.printTerminal(dataService.navigationParser.parseMap().toString());
+        //Terminal.printTerminal(dataService.navigationParser.parseMap().toString());
         for (DriveDir command : dataService.navigationParser.parseMap()){
             synchronized (this) {
                 queueService.insertJob(command.toString());
@@ -153,6 +153,9 @@ public class RobotCoreLoop implements Runnable{
                 break;
             case "04 E3 88 8A C8 48 80":
                 dataService.setCurrentLocation(19);
+                break;
+            case "04 26 3E 92 1E 25 80":
+                dataService.setCurrentLocation(20);
                 break;
             case "04 DA 88 8A C8 48 80":
                 dataService.setCurrentLocation(21);

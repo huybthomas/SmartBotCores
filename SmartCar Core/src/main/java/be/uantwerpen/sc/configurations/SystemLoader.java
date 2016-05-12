@@ -35,6 +35,7 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     DataService dataService;
     @Autowired
     mqttLocationPublisher locationPublisher;
+
     /*@Autowired
     CStatusEventHandler cStatusEventHandler;
     @Autowired

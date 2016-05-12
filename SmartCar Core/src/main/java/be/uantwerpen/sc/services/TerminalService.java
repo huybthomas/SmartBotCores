@@ -27,8 +27,6 @@ public class TerminalService
     private CCommandSender sender;
     @Autowired
     private QueueService queueService;
-    @Autowired
-    private SimulationService simulationService;
 
     public TerminalService()
     {
@@ -46,7 +44,6 @@ public class TerminalService
     {
         terminal.printTerminal(" :: SmartCar Core - 2016 ::  -  Developed by: Huybrechts T., Janssens A., Joosens D., Vervliet N.");
         terminal.printTerminal("Type 'help' to display the possible commands.");
-        simulationService.setActiveSimulator(false);
         terminal.activateTerminal();
     }
 
@@ -122,20 +119,9 @@ public class TerminalService
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-                    sender.sendCommand("SPEAKER PLAY cantina");
+                    sender.sendCommand("SPEAKER PLAY moon");
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
-                }
-                break;
-            case "simulate":
-                try {
-                    String command2 = commandString.split(" ", 2)[1].toLowerCase();
-                    if(command2.equals("true"))
-                        simulationService.setActiveSimulator(true);
-                    else
-                        simulationService.setActiveSimulator(false);
-                }catch(ArrayIndexOutOfBoundsException e){
-                    terminal.printTerminal("error");
                 }
                 break;
             case "checkqueue":

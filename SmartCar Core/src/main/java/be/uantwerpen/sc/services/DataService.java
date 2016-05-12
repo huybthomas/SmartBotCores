@@ -4,6 +4,7 @@ import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.tools.Edge;
 import be.uantwerpen.sc.tools.NavigationParser;
 import be.uantwerpen.sc.tools.PathplanningType;
+import be.uantwerpen.sc.tools.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -58,17 +59,18 @@ public class DataService {
             int end = navigationParser.list.get(1).getId();
             int lid = -1;
             //find link from start to end
-            for (Edge e : navigationParser.list.get(1).getAdjacencies()) {
+            for (Edge e : navigationParser.list.get(0).getAdjacencies()) {
                 if (e.getTarget() == end) {
                     lid = e.getLinkEntity().getLid();
                 }
             }
 
+            Terminal.printTerminal("Current Link: " + lid);
+
             //delete entry from navigationParser
             navigationParser.list.remove(0);
-
             RestTemplate rest = new RestTemplate();
-            rest.getForObject("http://" + serverIP + "/bot/" + robotID + "/lid/" + lid, null);
+            rest.getForObject("http://" + serverIP + "/bot/" + robotID + "/lid/" + lid, Integer.class);
         }
     }
 }
