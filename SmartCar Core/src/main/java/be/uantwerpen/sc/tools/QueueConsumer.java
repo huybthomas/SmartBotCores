@@ -45,6 +45,10 @@ public class QueueConsumer implements Runnable
                             if(!s.contains("DRIVE DISTANCE")) {
                                 dataService.robotBusy = true;
                             }
+                            if(s.contains("DRIVE FOLLOWLINE")){
+                                //Next Link
+
+                            }
                         }
                     }
                 }

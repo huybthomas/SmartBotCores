@@ -18,7 +18,7 @@ public class CLocationPoller implements Runnable {
     public void run(){
         while(!Thread.currentThread().isInterrupted()){
             try{
-                Thread.sleep(100);
+                Thread.currentThread().sleep(500);
             }catch (Exception e){
                 e.printStackTrace();
             }

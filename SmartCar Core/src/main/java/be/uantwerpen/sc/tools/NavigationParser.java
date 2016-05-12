@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class NavigationParser {
 
-    List<Vertex> list;
+    public List<Vertex> list;
     Queue<DriveDir> commands = new LinkedList<DriveDir>();
 
     public NavigationParser(List<Vertex> list){
