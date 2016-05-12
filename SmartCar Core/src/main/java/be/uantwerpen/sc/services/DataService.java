@@ -1,8 +1,12 @@
 package be.uantwerpen.sc.services;
 
+import be.uantwerpen.sc.models.map.Map;
+import be.uantwerpen.sc.tools.Edge;
+import be.uantwerpen.sc.tools.NavigationParser;
 import be.uantwerpen.sc.tools.PathplanningType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by Arthur on 24/04/2016.
@@ -10,13 +14,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class DataService {
 
+    public String serverIP = "146.175.140.118:1994";
+
     private Long robotID;
 
-    private float millis;
+    private int millis;
 
     public boolean robotBusy = false;
 
     public String trafficLightStatus;
+
+    public Map map = null;
+    public NavigationParser navigationParser = null;
 
     private String tag = "NO_TAG";
     private int currentLocation = -1;
@@ -38,8 +47,28 @@ public class DataService {
     }
 
     public float getMillis() {return millis;}
-    public void setMillis(float millis) {this.millis = millis;}
+    public void setMillis(int millis) {this.millis = millis;}
 
     public String getTag() {return tag;}
     public void setTag(String tag) {this.tag = tag;}
+
+    public void nextLink(){
+        if(map != null && navigationParser != null) {
+            int start = navigationParser.list.get(0).getId();
+            int end = navigationParser.list.get(1).getId();
+            int lid = -1;
+            //find link from start to end
+            for (Edge e : navigationParser.list.get(1).getAdjacencies()) {
+                if (e.getTarget() == end) {
+                    lid = e.getLinkEntity().getLid();
+                }
+            }
+
+            //delete entry from navigationParser
+            navigationParser.list.remove(0);
+
+            RestTemplate rest = new RestTemplate();
+            rest.getForObject("http://" + serverIP + "/bot/" + robotID + "/lid/" + lid, null);
+        }
+    }
 }

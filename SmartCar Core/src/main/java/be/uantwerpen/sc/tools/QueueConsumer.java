@@ -56,6 +56,10 @@ public class QueueConsumer implements Runnable
                                     dataService.robotBusy = true;
                                 }
                             }
+                            if(s.contains("DRIVE FOLLOWLINE")){
+                                //Next Link
+
+                            }
                         }
                     }
                 }

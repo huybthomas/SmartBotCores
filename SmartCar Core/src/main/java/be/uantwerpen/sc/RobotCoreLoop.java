@@ -3,6 +3,7 @@ package be.uantwerpen.sc;
 import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.CStatusEventHandler;
 import be.uantwerpen.sc.controllers.MapController;
+import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.PathplanningService;
 import be.uantwerpen.sc.services.QueueService;
@@ -32,9 +33,6 @@ public class RobotCoreLoop implements Runnable{
 
     private IPathplanning pathplanning;
 
-    //private String serverIP = "146.175.140.118:1994";
-    private String serverIP = "localhost:1994";
-
     public RobotCoreLoop(QueueService queueService, MapController mapController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;
         this.mapController = mapController;
@@ -47,24 +45,20 @@ public class RobotCoreLoop implements Runnable{
     public void run(){
         //getRobotId
         RestTemplate restTemplate = new RestTemplate();
-        Long robotID = restTemplate.getForObject("http://" + serverIP + "/bot/newRobot", Long.class);
+        Long robotID = restTemplate.getForObject("http://" + dataService.serverIP + "/bot/newRobot", Long.class);
         dataService.setRobotID(robotID);
 
         Terminal.printTerminal("Got ID: " + robotID);
 
-        //Drive forward
-        synchronized (this) {
-            queueService.insertJob("DRIVE FOLLOWLINE");
-        }
-        //Read tag
-        synchronized (this) {
-            queueService.insertJob("TAG READ UID");
-        }
         //Wait for tag read
         synchronized (this) {
-            while (dataService.getTag().equals("NO_TAG")) {
+            while (dataService.getTag().trim().equals("NONE") || dataService.getTag().equals("NO_TAG")) {
                 try{
-                   Thread.sleep(10);
+                    //Read tag
+                    synchronized (this) {
+                        queueService.insertJob("TAG READ UID");
+                    }
+                    Thread.sleep(2000);
                 }catch(InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -76,19 +70,25 @@ public class RobotCoreLoop implements Runnable{
         updateStartLocation();
         Terminal.printTerminal("Start Location: " + dataService.getCurrentLocation());
 
-        //TODO Update location on server (Also on DataService)
-
         //Setup interface for correct mode
         setupInterface();
 
+        synchronized (this) {
+            queueService.insertJob("DRIVE FOLLOWLINE");
+            queueService.insertJob("DRIVE FORWARD 50");
+        }
+
+        dataService.map = mapController.getMap();
+
         //Use pathplanning (Described in Interface)
-        NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),15,6));
-        for (DriveDir command : navigationParser.parseMap()){
+        dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(),6));
+        Terminal.printTerminal(dataService.navigationParser.parseMap().toString());
+        for (DriveDir command : dataService.navigationParser.parseMap()){
             synchronized (this) {
                 queueService.insertJob(command.toString());
             }
         }
-        Terminal.printTerminal(navigationParser.parseMap().toString());
+
     }
 
     private void setupInterface(){
@@ -97,17 +97,29 @@ public class RobotCoreLoop implements Runnable{
 
     private void updateStartLocation(){
         switch(dataService.getTag().trim()){
+            case "04 70 39 32 06 27 80":
+                dataService.setCurrentLocation(1);
+                break;
             case "04 67 88 8A C8 48 80":
                 dataService.setCurrentLocation(2);
+                break;
+            case "04 97 36 A2 F7 22 80":
+                dataService.setCurrentLocation(3);
+                break;
+            case "04 36 8A 9A F6 1F 80":
+                dataService.setCurrentLocation(4);
+                break;
+            case "04 7B 88 8A C8 48 80":
+                dataService.setCurrentLocation(5);
+                break;
+            case "04 6C 6B 32 06 27 80":
+                dataService.setCurrentLocation(6);
                 break;
             case "04 84 88 8A C8 48 80":
                 dataService.setCurrentLocation(7);
                 break;
             case "04 B3 88 8A C8 48 80":
                 dataService.setCurrentLocation(8);
-                break;
-            case "04 7B 88 8A C8 48 80":
-                dataService.setCurrentLocation(5);
                 break;
             case "04 8D 88 8A C8 48 80":
                 dataService.setCurrentLocation(9);
@@ -123,6 +135,12 @@ public class RobotCoreLoop implements Runnable{
                 break;
             case "04 A1 88 8A C8 48 80":
                 dataService.setCurrentLocation(13);
+                break;
+            case "04 86 04 22 A9 34 84":
+                dataService.setCurrentLocation(14);
+                break;
+            case "04 18 25 9A 7F 22 80":
+                dataService.setCurrentLocation(15);
                 break;
             case "04 BC 88 8A C8 48 80":
                 dataService.setCurrentLocation(16);
@@ -142,8 +160,11 @@ public class RobotCoreLoop implements Runnable{
             case "04 D0 88 8A C8 48 80":
                 dataService.setCurrentLocation(22);
                 break;
-            case "UNKNOWN":
-                dataService.setCurrentLocation(14);
+            case "04 41 70 92 1E 25 80":
+                dataService.setCurrentLocation(23);
+                break;
+            case "04 3C 67 9A F6 1F 80":
+                dataService.setCurrentLocation(24);
                 break;
             default:
                 dataService.setCurrentLocation(-1);
