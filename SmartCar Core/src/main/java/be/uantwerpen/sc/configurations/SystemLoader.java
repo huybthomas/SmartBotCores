@@ -4,7 +4,6 @@ import be.uantwerpen.sc.RobotCoreLoop;
 import be.uantwerpen.sc.controllers.*;
 import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.QueueService;
-import be.uantwerpen.sc.services.SimulationService;
 import be.uantwerpen.sc.tools.PathplanningType;
 import be.uantwerpen.sc.tools.QueueConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +35,6 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     DataService dataService;
     @Autowired
     mqttLocationPublisher locationPublisher;
-    @Autowired
-    SimCCommandSender simCCommandSender;
-    @Autowired
-    SimulationService simulationService;
 
     /*@Autowired
     CStatusEventHandler cStatusEventHandler;
@@ -52,7 +47,7 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     public void onApplicationEvent(ContextRefreshedEvent event)
     {
         robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathplanningType, dataService);
-        QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService,simCCommandSender,simulationService);
+        QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
         CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
         new Thread(robotCoreLoop).start();
         new Thread(cStatusEventHandler).start();
