@@ -20,6 +20,27 @@ public class DataService {
     private Long robotID;
 
     private int millis;
+    private int linkMillis;
+
+    public int getNextNode() {
+        return nextNode;
+    }
+
+    public void setNextNode(int nextNode) {
+        this.nextNode = nextNode;
+    }
+
+    private int nextNode;
+
+    public boolean hasPermission() {
+        return hasPermission;
+    }
+
+    public void setPermission(boolean hasPermission) {
+        this.hasPermission = hasPermission;
+    }
+
+    private boolean hasPermission = false;
 
     public boolean robotBusy = false;
 
@@ -47,8 +68,16 @@ public class DataService {
         this.currentLocation = currentLocation;
     }
 
-    public float getMillis() {return millis;}
+    public int getMillis() {return millis;}
     public void setMillis(int millis) {this.millis = millis;}
+
+    public int getLinkMillis() {
+        return linkMillis;
+    }
+
+    public void setLinkMillis(int linkMillis) {
+        this.linkMillis = linkMillis;
+    }
 
     public String getTag() {return tag;}
     public void setTag(String tag) {this.tag = tag;}
@@ -57,11 +86,13 @@ public class DataService {
         if(map != null && navigationParser != null) {
             int start = navigationParser.list.get(0).getId();
             int end = navigationParser.list.get(1).getId();
+            nextNode = end;
             int lid = -1;
             //find link from start to end
             for (Edge e : navigationParser.list.get(0).getAdjacencies()) {
                 if (e.getTarget() == end) {
                     lid = e.getLinkEntity().getLid();
+                    linkMillis = e.getLinkEntity().getLength();
                 }
             }
 
