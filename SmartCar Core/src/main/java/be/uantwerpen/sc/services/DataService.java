@@ -32,6 +32,16 @@ public class DataService {
 
     private int nextNode;
 
+    public int getPrevNode() {
+        return prevNode;
+    }
+
+    public void setPrevNode(int prevNode) {
+        this.prevNode = prevNode;
+    }
+
+    private int prevNode;
+
     public boolean hasPermission() {
         return hasPermission;
     }
@@ -87,6 +97,7 @@ public class DataService {
             int start = navigationParser.list.get(0).getId();
             int end = navigationParser.list.get(1).getId();
             nextNode = end;
+            prevNode = start;
             int lid = -1;
             //find link from start to end
             for (Edge e : navigationParser.list.get(0).getAdjacencies()) {

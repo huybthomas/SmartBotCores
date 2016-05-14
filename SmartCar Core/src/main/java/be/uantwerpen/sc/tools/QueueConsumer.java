@@ -65,6 +65,8 @@ public class QueueConsumer implements Runnable
                                 dataService.nextLink();
                                 dataService.setPermission(false);
                                 //Unlock point
+                                RestTemplate rest = new RestTemplate();
+                                rest.getForObject("http://" + dataService.serverIP + "/setlock/" + dataService.getPrevNode() + "/1", Integer.class);
                             }
                         }
                     }
