@@ -48,11 +48,11 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     {
         robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathplanningType, dataService);
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
-        CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
+        //CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
         new Thread(robotCoreLoop).start();
-        new Thread(cStatusEventHandler).start();
+        //new Thread(cStatusEventHandler).start();
         new Thread(queueConsumer).start();
-        new Thread(cLocationPoller).start();
+        //new Thread(cLocationPoller).start();
         terminalService.systemReady();
     }
 }

@@ -53,6 +53,16 @@ public class DataService {
     public String getTag() {return tag;}
     public void setTag(String tag) {this.tag = tag;}
 
+    private String LookingCoordiante;
+
+    public String getLookingCoordiante() {
+        return LookingCoordiante;
+    }
+
+    public void setLookingCoordiante(String lookingCoordiante) {
+        LookingCoordiante = lookingCoordiante;
+    }
+
     public void nextLink(){
         if(map != null && navigationParser != null) {
             int start = navigationParser.list.get(0).getId();

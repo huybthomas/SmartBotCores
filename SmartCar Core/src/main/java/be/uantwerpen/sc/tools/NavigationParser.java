@@ -71,7 +71,7 @@ public class NavigationParser {
         }
     }
 
-    private DriveDir getNextRelDir(direction startDir, direction stopDir){
+    public DriveDir getNextRelDir(direction startDir, direction stopDir){
         //Calculate relative direction
         switch(startDir)
         {
