@@ -26,6 +26,9 @@ public class PathplanningType {
                 case "dijkstra":
                     type = PathplanningEnum.DIJKSTRA;
                     break;
+                case "random":
+                    type = PathplanningEnum.RANDOM;
+                    break;
                 default:
                     //run default
                     type = PathplanningEnum.TERMINAL;

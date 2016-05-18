@@ -12,6 +12,6 @@ import java.util.List;
 public interface IPathplanning {
 
     List<Vertex> Calculatepath(Map map, int start, int stop);
-    Vertex nextRandomPath(Map map, int start);
+    //Vertex nextRandomPath(Map map, int start);
 
 }

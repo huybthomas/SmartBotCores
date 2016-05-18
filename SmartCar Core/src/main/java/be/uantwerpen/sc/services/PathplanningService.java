@@ -71,9 +71,9 @@ public class PathplanningService implements IPathplanning {
         return path;
     }
 
-    @Override
+    /*@Override
     public Vertex nextRandomPath(Map map, int start) {
 
         return null;
-    }
+    }*/
 }

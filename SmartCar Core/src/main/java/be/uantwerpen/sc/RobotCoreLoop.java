@@ -4,10 +4,7 @@ import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.CStatusEventHandler;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.models.map.Map;
-import be.uantwerpen.sc.services.DataService;
-import be.uantwerpen.sc.services.PathplanningService;
-import be.uantwerpen.sc.services.QueueService;
-import be.uantwerpen.sc.services.TerminalService;
+import be.uantwerpen.sc.services.*;
 import be.uantwerpen.sc.tools.*;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +89,17 @@ public class RobotCoreLoop implements Runnable{
     }
 
     private void setupInterface(){
-        pathplanning = new PathplanningService();
+        switch (pathplanningType.getType()){
+            case DIJKSTRA:
+                pathplanning = new PathplanningService();
+                break;
+            case RANDOM:
+                pathplanning = new RandomPathPlanning();
+                break;
+            default:
+                //Dijkstra
+                pathplanning = new PathplanningService();
+        }
     }
 
     private void updateStartLocation(){
