@@ -168,7 +168,7 @@ public class TerminalService
                 terminal.printTerminal("-------------------");
                 terminal.printTerminal("'navigate {start} {end}': navigates the robot from point {start} to {end}");
                 terminal.printTerminal("'path {start} {end}': get the path from the server");
-                terminal.printTerminal("'random {start}': get random path from the server from start");
+                terminal.printTerminal("'random': get random path from the server from current location");
                 terminal.printTerminal("'simulate {true/false}': activate he simulator");
                 terminal.printTerminal("'checkQueue': check content of the queue");
                 terminal.printTerminal("'exit' : shutdown the core.");
@@ -205,121 +205,9 @@ public class TerminalService
             currentLocation = 4;
             dataService.setLookingCoordiante("N");
         }
-        IPathplanning pathplanning = new PathplanningService();
         List<Vertex> path = pathController.getRandomPath(currentLocation).getPath();
-        int i = 0;
-        for(Edge e : path.get(0).getAdjacencies()){
-            if(e.getTarget() == path.get(1).getId()){
-                break;
-            }
-            i++;
-        }
         NavigationParser navigationParser = new NavigationParser(path);
-        if(dataService.getLookingCoordiante().equals(path.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection())){
-            //dataService.setLookingCoordiante(path.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection());
-            System.out.println(navigationParser.parseMap().toString());
+        System.out.println(navigationParser.parseRandomMap().toString());
 
-        }else{
-            Queue<DriveDir> commands = new LinkedList<DriveDir>();
-            commands.add(relDir(dataService.getLookingCoordiante(), path.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection()));
-            //NavigationParser navigationParser = new NavigationParser(path);
-            System.out.println(commands.toString());
-            System.out.println(navigationParser.parseMap().toString());
-            switch (path.get(0).getAdjacencies().get(i).getLinkEntity().getLid()){
-                case 15:
-                    dataService.setLookingCoordiante("E");
-                    break;
-                case 24:
-                    dataService.setLookingCoordiante("N");
-                    break;
-                case 27:
-                    dataService.setLookingCoordiante("E");
-                    break;
-                case 43:
-                    dataService.setLookingCoordiante("E");
-                    break;
-                case 51:
-                    dataService.setLookingCoordiante("N");
-                    break;
-                default:
-                    dataService.setLookingCoordiante(path.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection());
-            }
-        }
-
-        dataService.setCurrentLocation(path.get(1).getId());
-    }
-
-    private DriveDir relDir(String startDir, String stopDir){
-        switch(startDir)
-        {
-            //From NORTH
-            case "N":
-                switch(stopDir)
-                {
-                    //Go EAST
-                    case "E":
-                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn LEFT
-                    //Go SOUTH
-                    case "S":
-                        return new DriveDir(DriveDirEnum.TURN);   //Go STRAIGHT
-                    //Go WEST
-                    case "W":
-                        return new DriveDir(DriveDirEnum.LEFT);   //Turn RIGHT
-
-                }
-
-                //From EAST
-            case "E":
-                switch(stopDir)
-                {
-                    //Go NORTH
-                    case "N":
-                        return new DriveDir(DriveDirEnum.LEFT);   //Turn RIGHT
-                    //Go SOUTH
-                    case "S":
-                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn LEFT
-                    //Go WEST
-                    case "W":
-                        return new DriveDir(DriveDirEnum.TURN);   //Go STRAIGHT
-                }
-
-                //From SOUTH
-            case "S":
-                switch(stopDir)
-                {
-                    //Go NORTH
-                    case "N":
-                        return new DriveDir(DriveDirEnum.TURN);   //Go STRAIGHT
-                    //Go EAST
-                    case "E":
-                        return new DriveDir(DriveDirEnum.LEFT);   //Turn RIGHT
-                    //Go WEST
-                    case "W":
-                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn LEFT
-
-                }
-
-                //From WEST
-            case "W":
-                switch(stopDir)
-                {
-                    //Go NORTH
-                    case "N":
-                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn LEFT
-
-                    //Go EAST
-                    case "E":
-                        return new DriveDir(DriveDirEnum.TURN);   //Go STRAIGHT
-
-                    //Go SOUTH
-                    case "S":
-                        return new DriveDir(DriveDirEnum.LEFT);   //Turn RIGHT
-
-                }
-
-        }
-
-        //Invalid direction
-        return null;
     }
 }
