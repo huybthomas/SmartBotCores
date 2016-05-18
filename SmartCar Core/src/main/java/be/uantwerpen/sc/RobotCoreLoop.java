@@ -31,7 +31,7 @@ public class RobotCoreLoop implements Runnable{
     @Autowired
     private PathplanningType pathplanningType;
 
-    private IPathplanning pathplanning;
+    public IPathplanning pathplanning;
 
     public RobotCoreLoop(QueueService queueService, MapController mapController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;
@@ -73,22 +73,25 @@ public class RobotCoreLoop implements Runnable{
 
         dataService.map = mapController.getMap();
 
-        //Use pathplanning (Described in Interface)
-        dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(),12));
-        //Parse Map
-        dataService.navigationParser.parseMap();
+        if(pathplanningType.getType() != PathplanningEnum.DIJKSTRA) {
 
-        //Setup for driving
-        int start = dataService.navigationParser.list.get(0).getId();
-        int end = dataService.navigationParser.list.get(1).getId();
-        dataService.setNextNode(end);
-        dataService.setPrevNode(start);
-        queueService.insertJob("DRIVE FOLLOWLINE");
-        queueService.insertJob("DRIVE FORWARD 50");
+            //Use pathplanning (Described in Interface)
+            dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), 12));
+            //Parse Map
+            dataService.navigationParser.parseMap();
 
-        //Process map
-        for (DriveDir command : dataService.navigationParser.commands){
-            queueService.insertJob(command.toString());
+            //Setup for driving
+            int start = dataService.navigationParser.list.get(0).getId();
+            int end = dataService.navigationParser.list.get(1).getId();
+            dataService.setNextNode(end);
+            dataService.setPrevNode(start);
+            queueService.insertJob("DRIVE FOLLOWLINE");
+            queueService.insertJob("DRIVE FORWARD 50");
+
+            //Process map
+            for (DriveDir command : dataService.navigationParser.commands) {
+                queueService.insertJob(command.toString());
+            }
         }
     }
 

@@ -24,7 +24,7 @@ public class CStatusEventHandler implements Runnable{
 
     public CStatusEventHandler(){
         try{
-            socket = new Socket("146.175.140.190", 1314);
+            socket = new Socket("146.175.140.191", 1314);
             dIn = new DataInputStream(socket.getInputStream());
         }catch(Exception e){
             e.printStackTrace();

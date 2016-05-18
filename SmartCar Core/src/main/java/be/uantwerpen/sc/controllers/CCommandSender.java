@@ -22,7 +22,7 @@ public class CCommandSender {
 
     public CCommandSender(){
         try{
-            socket = new Socket("146.175.140.190", 1313);
+            socket = new Socket("146.175.140.191", 1313);
             socket.setSoTimeout(500);
             dOut = new DataOutputStream(socket.getOutputStream());
             dIn = new DataInputStream(socket.getInputStream());
