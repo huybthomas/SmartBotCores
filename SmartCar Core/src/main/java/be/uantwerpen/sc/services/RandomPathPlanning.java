@@ -6,6 +6,7 @@ import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.tools.IPathplanning;
 import be.uantwerpen.sc.tools.Vertex;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -15,8 +16,12 @@ import java.util.List;
 
 public class RandomPathPlanning implements IPathplanning {
 
-    @Autowired
+
     PathController pathController;
+
+    public RandomPathPlanning(PathController pathController) {
+        this.pathController = pathController;
+    }
 
     @Override
     public List<Vertex> Calculatepath(Map map, int start, int stop) {

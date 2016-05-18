@@ -150,7 +150,7 @@ public class NavigationParser {
         return null;
     }
 
-    public Queue<DriveDir> parseRandomMap() {
+    public Queue<DriveDir> parseRandomMap(DataService dataService) {
         if (list.isEmpty()) {
             Terminal.printTerminalError("Cannot parse empty map");
         } else {
@@ -163,8 +163,9 @@ public class NavigationParser {
             }
             if (dataService.getLookingCoordiante().equals(list.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection())) {
                 //dataService.setLookingCoordiante(path.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection());
-                System.out.println(parseMap().toString());
 
+                commands.add(new DriveDir(DriveDirEnum.FOLLOW));//System.out.println(parseMap().toString());
+                commands.add(new DriveDir(DriveDirEnum.FORWARD));
             } else {
                 //Queue<DriveDir> commands = new LinkedList<DriveDir>();
                 commands.add(relDirRandom(dataService.getLookingCoordiante(), list.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection()));

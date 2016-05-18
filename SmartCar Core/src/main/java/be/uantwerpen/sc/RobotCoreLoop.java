@@ -3,11 +3,9 @@ package be.uantwerpen.sc;
 import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.CStatusEventHandler;
 import be.uantwerpen.sc.controllers.MapController;
+import be.uantwerpen.sc.controllers.PathController;
 import be.uantwerpen.sc.models.map.Map;
-import be.uantwerpen.sc.services.DataService;
-import be.uantwerpen.sc.services.PathplanningService;
-import be.uantwerpen.sc.services.QueueService;
-import be.uantwerpen.sc.services.TerminalService;
+import be.uantwerpen.sc.services.*;
 import be.uantwerpen.sc.tools.*;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +26,16 @@ public class RobotCoreLoop implements Runnable{
     @Autowired
     DataService dataService;
     private MapController mapController;
+    private PathController pathController;
     @Autowired
     private PathplanningType pathplanningType;
 
-    private IPathplanning pathplanning;
+    public IPathplanning pathplanning;
 
-    public RobotCoreLoop(QueueService queueService, MapController mapController, PathplanningType pathplanningType, DataService dataService){
+    public RobotCoreLoop(QueueService queueService, MapController mapController, PathController pathController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;
         this.mapController = mapController;
+        this.pathController = pathController;
         this.pathplanningType = pathplanningType;
         this.dataService = dataService;
         //Setup type
@@ -72,23 +72,27 @@ public class RobotCoreLoop implements Runnable{
         setupInterface();
 
         dataService.map = mapController.getMap();
+        dataService.setLookingCoordiante("N");
 
-        //Use pathplanning (Described in Interface)
-        dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(),12));
-        //Parse Map
-        dataService.navigationParser.parseMap();
+        while(!Thread.interrupted() && pathplanningType.getType() == PathplanningEnum.RANDOM) {
+            //Use pathplanning (Described in Interface)
+            dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), 12));
+            //Parse Map
+            //dataService.navigationParser.parseMap();
+            dataService.navigationParser.parseRandomMap(dataService);
 
-        //Setup for driving
-        int start = dataService.navigationParser.list.get(0).getId();
-        int end = dataService.navigationParser.list.get(1).getId();
-        dataService.setNextNode(end);
-        dataService.setPrevNode(start);
-        queueService.insertJob("DRIVE FOLLOWLINE");
-        queueService.insertJob("DRIVE FORWARD 50");
+            //Setup for driving
+            int start = dataService.navigationParser.list.get(0).getId();
+            int end = dataService.navigationParser.list.get(1).getId();
+            dataService.setNextNode(end);
+            dataService.setPrevNode(start);
+            //queueService.insertJob("DRIVE FOLLOWLINE");
+            //queueService.insertJob("DRIVE FORWARD 50");
 
-        //Process map
-        for (DriveDir command : dataService.navigationParser.commands){
-            queueService.insertJob(command.toString());
+            //Process map
+            for (DriveDir command : dataService.navigationParser.commands) {
+                queueService.insertJob(command.toString());
+            }
         }
     }
 
@@ -98,7 +102,7 @@ public class RobotCoreLoop implements Runnable{
                 pathplanning = new PathplanningService();
                 break;
             case RANDOM:
-                pathplanning = new RandomPathPlanning();
+                pathplanning = new RandomPathPlanning(pathController);
                 break;
             default:
                 //Dijkstra

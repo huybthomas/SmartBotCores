@@ -1,5 +1,6 @@
 package be.uantwerpen.sc.services;
 
+import be.uantwerpen.sc.RobotCoreLoop;
 import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.controllers.PathController;
@@ -31,6 +32,8 @@ public class TerminalService
     @Autowired
     private DataService dataService;
 
+    private RobotCoreLoop robotCoreLoop;
+
     public TerminalService()
     {
         terminal = new Terminal()
@@ -43,8 +46,9 @@ public class TerminalService
         };
     }
 
-    public void systemReady()
+    public void systemReady(RobotCoreLoop robotCoreLoop)
     {
+        robotCoreLoop = robotCoreLoop;
         terminal.printTerminal(" :: SmartCar Core - 2016 ::  -  Developed by: Huybrechts T., Janssens A., Joosens D., Vervliet N.");
         terminal.printTerminal("Type 'help' to display the possible commands.");
         terminal.activateTerminal();
@@ -58,23 +62,13 @@ public class TerminalService
         {
             case "navigate":
                 try {
-                    String command2 = commandString.split(" ", 2)[1].toLowerCase();
-
-                    String start = command2.split(" ", 2)[0].toLowerCase();
-                    String end = command2.split(" ", 2)[1].toLowerCase();
-                    if (start == end) {
-                        terminal.printTerminal("Start cannot equal end.");
-                    } else if (start == "" || end == "") {
+                    String end = commandString.split(" ", 2)[1].toLowerCase();
+                    try {
+                        int endInt = Integer.parseInt(end);
+                        startPathPlanning(endInt);
+                    } catch (NumberFormatException e) {
+                        terminal.printTerminalError(e.getMessage());
                         terminal.printTerminal("Usage: navigate start end");
-                    } else {
-                        try {
-                            int startInt = Integer.parseInt(start);
-                            int endInt = Integer.parseInt(end);
-                            startPathPlanning(startInt, endInt);
-                        } catch (NumberFormatException e) {
-                            terminal.printTerminalError(e.getMessage());
-                            terminal.printTerminal("Usage: navigate start end");
-                        }
                     }
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
@@ -177,21 +171,23 @@ public class TerminalService
         }
     }
 
-    private void startPathPlanning(int start, int end){
-        terminal.printTerminal("Starting pathplanning from point " + start + " to " + end);
-        //get Map from server
-        //Send map + start + end to pathplanning
+    private void startPathPlanning(int end){
+        terminal.printTerminal("Starting pathplanning from point " + dataService.getCurrentLocation() + " to " + end);
+        dataService.navigationParser = new NavigationParser(robotCoreLoop.pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(), end));
+        //Parse Map
+        //dataService.navigationParser.parseMap();
+        dataService.navigationParser.parseRandomMap(dataService);
 
-       /* Vertex[] list = mapController.getPath();
-        List<Vertex> list2 = Arrays.asList(list);
-        NavigationParser navigationParser = new NavigationParser(list2);
-        navigationParser.parseMap();*/
-        IPathplanning pathplanning = new PathplanningService();
-        NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),start,end));
-        for (DriveDir command : navigationParser.parseMap()){
-            //queueService.insertJob(command.toString());
+        //Setup for driving
+        dataService.setNextNode(dataService.navigationParser.list.get(1).getId());
+        dataService.setPrevNode(dataService.navigationParser.list.get(0).getId());
+        queueService.insertJob("DRIVE FOLLOWLINE");
+        queueService.insertJob("DRIVE FORWARD 50");
+
+        //Process map
+        for (DriveDir command : dataService.navigationParser.commands) {
+            queueService.insertJob(command.toString());
         }
-        System.out.println(navigationParser.parseMap().toString());
     }
 
     private void getPath(int start, int end){
@@ -207,7 +203,7 @@ public class TerminalService
         }
         List<Vertex> path = pathController.getRandomPath(currentLocation).getPath();
         NavigationParser navigationParser = new NavigationParser(path);
-        System.out.println(navigationParser.parseRandomMap().toString());
+        //System.out.println(navigationParser.parseRandomMap().toString());
 
     }
 }

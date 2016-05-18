@@ -2,6 +2,7 @@ package be.uantwerpen.sc.configurations;
 
 import be.uantwerpen.sc.RobotCoreLoop;
 import be.uantwerpen.sc.controllers.*;
+import be.uantwerpen.sc.models.map.Path;
 import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.QueueService;
 import be.uantwerpen.sc.tools.PathplanningType;
@@ -28,6 +29,8 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     @Autowired
     MapController mapController;
     @Autowired
+    PathController pathController;
+    @Autowired
     private PathplanningType pathplanningType;
     @Autowired
     CStatusEventHandler cStatusEventHandler;
@@ -46,13 +49,13 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     //Run after Spring context initialization
     public void onApplicationEvent(ContextRefreshedEvent event)
     {
-        robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathplanningType, dataService);
+        robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathController, pathplanningType, dataService);
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
         CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
         new Thread(robotCoreLoop).start();
         new Thread(cStatusEventHandler).start();
         new Thread(queueConsumer).start();
         new Thread(cLocationPoller).start();
-        terminalService.systemReady();
+        terminalService.systemReady(robotCoreLoop);
     }
 }
