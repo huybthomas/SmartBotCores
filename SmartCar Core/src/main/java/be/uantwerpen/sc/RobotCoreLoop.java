@@ -93,9 +93,17 @@ public class RobotCoreLoop implements Runnable{
     }
 
     private void setupInterface(){
-        pathplanning = new PathplanningService();
-
-
+        switch (pathplanningType.getType()){
+            case DIJKSTRA:
+                pathplanning = new PathplanningService();
+                break;
+            case RANDOM:
+                pathplanning = new RandomPathPlanning();
+                break;
+            default:
+                //Dijkstra
+                pathplanning = new PathplanningService();
+        }
     }
 
     private void updateStartLocation(){
