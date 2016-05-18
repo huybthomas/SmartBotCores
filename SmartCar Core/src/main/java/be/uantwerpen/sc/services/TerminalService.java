@@ -119,7 +119,7 @@ public class TerminalService
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-                    sender.sendCommand("SPEAKER PLAY moon");
+                    sender.sendCommand("SPEAKER PLAY cantina");
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
                 }

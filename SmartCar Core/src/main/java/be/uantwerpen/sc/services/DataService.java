@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class DataService {
 
-    public String serverIP = "146.175.140.118:1994";
+    public String serverIP = "146.175.140.86:1994";
 
     private Long robotID;
 
@@ -30,7 +30,7 @@ public class DataService {
         this.nextNode = nextNode;
     }
 
-    private int nextNode;
+    private int nextNode = -1;
 
     public int getPrevNode() {
         return prevNode;
@@ -40,17 +40,17 @@ public class DataService {
         this.prevNode = prevNode;
     }
 
-    private int prevNode;
+    private int prevNode = -1;
 
-    public boolean hasPermission() {
+    public int hasPermission() {
         return hasPermission;
     }
 
-    public void setPermission(boolean hasPermission) {
+    public void setPermission(int hasPermission) {
         this.hasPermission = hasPermission;
     }
 
-    private boolean hasPermission = false;
+    private int hasPermission = -1;
 
     public boolean robotBusy = false;
 
@@ -104,6 +104,7 @@ public class DataService {
                 if (e.getTarget() == end) {
                     lid = e.getLinkEntity().getLid();
                     linkMillis = e.getLinkEntity().getLength();
+                    Terminal.printTerminal("New Link Distance: " + linkMillis);
                 }
             }
 

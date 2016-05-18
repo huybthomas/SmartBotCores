@@ -5,6 +5,7 @@ import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.QueueService;
 import org.springframework.web.client.RestTemplate;
 
+import javax.swing.plaf.basic.BasicTreeUI;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -15,6 +16,8 @@ public class QueueConsumer implements Runnable
     private CCommandSender sender;
     private QueueService queueService;
     private DataService dataService;
+
+    private boolean first = true;
 
     private BlockingQueue<String> jobQueue;
 
@@ -34,20 +37,31 @@ public class QueueConsumer implements Runnable
                 if(queueService.getContentQueue().size() == 0){
                     //System.out.println("queue is empty");
                 }else{
-                    System.out.println(queueService.getContentQueue().toString());
-                    //check if robot has to wait before point
-                    if(dataService.getMillis() > dataService.getLinkMillis()-1000 && !dataService.hasPermission()){
-                        //Pause robot
-                        sender.sendCommand("DRIVE PAUSE");
-                        //Ask for permission
-                        RestTemplate rest = new RestTemplate();
-                        boolean response = false;
-                        while(!response) {
-                            response = rest.getForObject("http://" + dataService.serverIP + "/requestlock/" + dataService.getNextNode(), boolean.class);
+                    Terminal.printTerminal("PrevNode: " + dataService.getPrevNode());
+                    if(!first) {
+                        //System.out.println(queueService.getContentQueue().toString());
+                        //check if robot has to wait before point
+                        Terminal.printTerminal("Distance: " + dataService.getMillis() + "\nStopDistance: " + (dataService.getLinkMillis() - 150));
+                        Terminal.printTerminal("Permission:" + dataService.hasPermission());
+                        if (dataService.getMillis() > dataService.getLinkMillis() - 150 && !(dataService.hasPermission() == dataService.getNextNode())) {
+                            //Pause robot
+                            sender.sendCommand("DRIVE PAUSE");
+                            //Ask for permission
+                            RestTemplate rest = new RestTemplate();
+                            boolean response = false;
+                            while (!response) {
+                                Terminal.printTerminal("Lock Requested");
+                                response = rest.getForObject("http://" + dataService.serverIP + "/point/requestlock/" + dataService.getNextNode(), boolean.class);
+                                if (!response) {
+                                    Terminal.printTerminal("Lock Denied: " + dataService.getNextNode());
+                                    Thread.sleep(200);
+                                }
+                            }
+                            //response true -> Lock granted
+                            Terminal.printTerminal("Lock Granted: " + dataService.getNextNode());
+                            dataService.setPermission(dataService.getNextNode());
+                            sender.sendCommand("DRIVE RESUME");
                         }
-                        //response true -> Lock granted
-                        dataService.setPermission(true);
-                        sender.sendCommand("DRIVE RESUME");
                     }
 
                     //If robot not busy
@@ -60,11 +74,20 @@ public class QueueConsumer implements Runnable
                         }
                         if(s.contains("DRIVE FOLLOWLINE")){
                             //Next Link
-                            dataService.nextLink();
-                            dataService.setPermission(false);
+                            if(!first) {
+                                dataService.nextLink();
+                                if(dataService.hasPermission() == dataService.getNextNode()){
+                                    //Leave permission
+                                }else {
+                                    dataService.setPermission(-1);
+                                }
+                            }else{
+                                first = false;
+                            }
+
                             //Unlock point
                             RestTemplate rest = new RestTemplate();
-                            rest.getForObject("http://" + dataService.serverIP + "/setlock/" + dataService.getPrevNode() + "/1", Integer.class);
+                            rest.getForObject("http://" + dataService.serverIP + "/point/setlock/" + dataService.getPrevNode() + "/0", Integer.class);
                         }
                     }
                 }

@@ -50,7 +50,7 @@ public class MapController {
 
     @RequestMapping(method = RequestMethod.GET)
     public Map getMap(){
-        String coreIP = "http://146.175.140.118:1994";
+        String coreIP = "http://146.175.140.86:1994";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Map> responseList;
         responseList = restTemplate.getForEntity(coreIP.toString()+"/map/", Map.class);
