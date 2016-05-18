@@ -18,7 +18,7 @@ public class QueueService {
     public QueueService() {
     }
 
-    public String getJob(){
+    public synchronized String getJob(){
         try {
             return jobQueue.take();
         } catch (InterruptedException e) {
@@ -27,7 +27,7 @@ public class QueueService {
         return null;
     }
 
-    public void insertJob(String job){
+    public synchronized void insertJob(String job){
         try {
             jobQueue.put(job);
         } catch (InterruptedException e) {

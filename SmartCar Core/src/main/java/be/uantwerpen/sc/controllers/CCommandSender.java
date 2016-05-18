@@ -44,7 +44,7 @@ public class CCommandSender {
         }
     }
 
-    public boolean sendCommand(String str){
+    public synchronized boolean sendCommand(String str){
         try {
             //byte[] message = str.getBytes();
             //System.out.println(message.toString());

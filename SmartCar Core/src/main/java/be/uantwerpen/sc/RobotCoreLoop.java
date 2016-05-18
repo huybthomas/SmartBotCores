@@ -4,7 +4,10 @@ import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.CStatusEventHandler;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.models.map.Map;
-import be.uantwerpen.sc.services.*;
+import be.uantwerpen.sc.services.DataService;
+import be.uantwerpen.sc.services.PathplanningService;
+import be.uantwerpen.sc.services.QueueService;
+import be.uantwerpen.sc.services.TerminalService;
 import be.uantwerpen.sc.tools.*;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +55,7 @@ public class RobotCoreLoop implements Runnable{
             while (dataService.getTag().trim().equals("NONE") || dataService.getTag().equals("NO_TAG")) {
                 try{
                     //Read tag
-                    synchronized (this) {
-                        queueService.insertJob("TAG READ UID");
-                    }
+                    queueService.insertJob("TAG READ UID");
                     Thread.sleep(2000);
                 }catch(InterruptedException e) {
                     e.printStackTrace();
@@ -70,36 +71,31 @@ public class RobotCoreLoop implements Runnable{
         //Setup interface for correct mode
         setupInterface();
 
-        synchronized (this) {
-            queueService.insertJob("DRIVE FOLLOWLINE");
-            queueService.insertJob("DRIVE FORWARD 50");
-        }
-
         dataService.map = mapController.getMap();
 
         //Use pathplanning (Described in Interface)
-        dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(),6));
-        //Terminal.printTerminal(dataService.navigationParser.parseMap().toString());
-        for (DriveDir command : dataService.navigationParser.parseMap()){
-            synchronized (this) {
-                queueService.insertJob(command.toString());
-            }
-        }
+        dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(),12));
+        //Parse Map
+        dataService.navigationParser.parseMap();
 
+        //Setup for driving
+        int start = dataService.navigationParser.list.get(0).getId();
+        int end = dataService.navigationParser.list.get(1).getId();
+        dataService.setNextNode(end);
+        dataService.setPrevNode(start);
+        queueService.insertJob("DRIVE FOLLOWLINE");
+        queueService.insertJob("DRIVE FORWARD 50");
+
+        //Process map
+        for (DriveDir command : dataService.navigationParser.commands){
+            queueService.insertJob(command.toString());
+        }
     }
 
     private void setupInterface(){
-        switch (pathplanningType.getType()){
-            case DIJKSTRA:
-                pathplanning = new PathplanningService();
-                break;
-            case RANDOM:
-                pathplanning = new RandomPathPlanning();
-                break;
-            default:
-                //Dijkstra
-                pathplanning = new PathplanningService();
-        }
+        pathplanning = new PathplanningService();
+
+
     }
 
     private void updateStartLocation(){

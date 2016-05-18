@@ -15,11 +15,42 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class DataService {
 
-    public String serverIP = "146.175.140.118:1994";
+    public String serverIP = "146.175.140.86:1994";
 
     private Long robotID;
 
     private int millis;
+    private int linkMillis;
+
+    public int getNextNode() {
+        return nextNode;
+    }
+
+    public void setNextNode(int nextNode) {
+        this.nextNode = nextNode;
+    }
+
+    private int nextNode = -1;
+
+    public int getPrevNode() {
+        return prevNode;
+    }
+
+    public void setPrevNode(int prevNode) {
+        this.prevNode = prevNode;
+    }
+
+    private int prevNode = -1;
+
+    public int hasPermission() {
+        return hasPermission;
+    }
+
+    public void setPermission(int hasPermission) {
+        this.hasPermission = hasPermission;
+    }
+
+    private int hasPermission = -1;
 
     public boolean robotBusy = false;
 
@@ -47,8 +78,16 @@ public class DataService {
         this.currentLocation = currentLocation;
     }
 
-    public float getMillis() {return millis;}
+    public int getMillis() {return millis;}
     public void setMillis(int millis) {this.millis = millis;}
+
+    public int getLinkMillis() {
+        return linkMillis;
+    }
+
+    public void setLinkMillis(int linkMillis) {
+        this.linkMillis = linkMillis;
+    }
 
     public String getTag() {return tag;}
     public void setTag(String tag) {this.tag = tag;}
@@ -67,11 +106,15 @@ public class DataService {
         if(map != null && navigationParser != null) {
             int start = navigationParser.list.get(0).getId();
             int end = navigationParser.list.get(1).getId();
+            nextNode = end;
+            prevNode = start;
             int lid = -1;
             //find link from start to end
             for (Edge e : navigationParser.list.get(0).getAdjacencies()) {
                 if (e.getTarget() == end) {
                     lid = e.getLinkEntity().getLid();
+                    linkMillis = e.getLinkEntity().getLength();
+                    Terminal.printTerminal("New Link Distance: " + linkMillis);
                 }
             }
 

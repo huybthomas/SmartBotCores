@@ -63,7 +63,7 @@ public class CStatusEventHandler implements Runnable{
                     String millisString = s.split(":", 2)[1].trim();
                     int millis = Integer.parseInt(millisString);
                     synchronized (this) {
-                        Terminal.printTerminal("Distance: " + millis);
+                        //Terminal.printTerminal("Distance: " + millis);
                         dataService.setMillis(millis);
                         locationPublisher.publishLocation(millis);
                     }

@@ -14,7 +14,7 @@ public class NavigationParser {
     @Autowired
     private DataService dataService;
     public List<Vertex> list;
-    Queue<DriveDir> commands = new LinkedList<DriveDir>();
+    public Queue<DriveDir> commands = new LinkedList<DriveDir>();
 
     public NavigationParser(List<Vertex> list){
         this.list = list;
