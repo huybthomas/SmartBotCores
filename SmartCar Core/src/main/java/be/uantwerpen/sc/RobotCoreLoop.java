@@ -73,10 +73,8 @@ public class RobotCoreLoop implements Runnable{
         //Setup interface for correct mode
         setupInterface();
 
-        synchronized (this) {
-            queueService.insertJob("DRIVE FOLLOWLINE");
-            queueService.insertJob("DRIVE FORWARD 50");
-        }
+        queueService.insertJob("DRIVE FOLLOWLINE");
+        queueService.insertJob("DRIVE FORWARD 50");
 
         dataService.map = mapController.getMap();
 
@@ -84,11 +82,8 @@ public class RobotCoreLoop implements Runnable{
         dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(),6));
         //Terminal.printTerminal(dataService.navigationParser.parseMap().toString());
         for (DriveDir command : dataService.navigationParser.parseMap()){
-            synchronized (this) {
-                queueService.insertJob(command.toString());
-            }
+            queueService.insertJob(command.toString());
         }
-
     }
 
     private void setupInterface(){

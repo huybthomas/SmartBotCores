@@ -22,9 +22,7 @@ public class CLocationPoller implements Runnable {
             }catch (Exception e){
                 e.printStackTrace();
             }
-            synchronized (this){
-                cCommandSender.sendCommand("DRIVE DISTANCE");
-            }
+            cCommandSender.sendCommand("DRIVE DISTANCE");
         }
     }
 }

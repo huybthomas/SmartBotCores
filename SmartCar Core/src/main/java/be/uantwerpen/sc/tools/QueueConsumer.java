@@ -35,39 +35,36 @@ public class QueueConsumer implements Runnable
                     //System.out.println("queue is empty");
                 }else{
                     System.out.println(queueService.getContentQueue().toString());
-                    //Wait until robot not busy
-                    synchronized (this) {
-                        //check if robot has to wait before point
-                        if(dataService.getMillis() > dataService.getLinkMillis()-1000 && !dataService.hasPermission()){
-                            //Pause robot
-                            sender.sendCommand("DRIVE PAUSE");
-                            //Ask for permission
-                            RestTemplate rest = new RestTemplate();
-                            boolean response = false;
-                            while(!response) {
-                                response = rest.getForObject("http://" + dataService.serverIP + "/requestlock/" + dataService.getNextNode(), boolean.class);
-                            }
-                            //response true -> Lock granted
-                            dataService.setPermission(true);
-                            sender.sendCommand("DRIVE RESUME");
+                    //check if robot has to wait before point
+                    if(dataService.getMillis() > dataService.getLinkMillis()-1000 && !dataService.hasPermission()){
+                        //Pause robot
+                        sender.sendCommand("DRIVE PAUSE");
+                        //Ask for permission
+                        RestTemplate rest = new RestTemplate();
+                        boolean response = false;
+                        while(!response) {
+                            response = rest.getForObject("http://" + dataService.serverIP + "/requestlock/" + dataService.getNextNode(), boolean.class);
                         }
+                        //response true -> Lock granted
+                        dataService.setPermission(true);
+                        sender.sendCommand("DRIVE RESUME");
+                    }
 
-                        //If robot not busy
-                        if(!dataService.robotBusy) {
-                            String s = queueService.getJob();
-                            sender.sendCommand(s);
+                    //If robot not busy
+                    if(!dataService.robotBusy) {
+                        String s = queueService.getJob();
+                        sender.sendCommand(s);
 
-                            if(!s.contains("DRIVE DISTANCE")) {
-                                dataService.robotBusy = true;
-                            }
-                            if(s.contains("DRIVE FOLLOWLINE")){
-                                //Next Link
-                                dataService.nextLink();
-                                dataService.setPermission(false);
-                                //Unlock point
-                                RestTemplate rest = new RestTemplate();
-                                rest.getForObject("http://" + dataService.serverIP + "/setlock/" + dataService.getPrevNode() + "/1", Integer.class);
-                            }
+                        if(!s.contains("DRIVE DISTANCE")) {
+                            dataService.robotBusy = true;
+                        }
+                        if(s.contains("DRIVE FOLLOWLINE")){
+                            //Next Link
+                            dataService.nextLink();
+                            dataService.setPermission(false);
+                            //Unlock point
+                            RestTemplate rest = new RestTemplate();
+                            rest.getForObject("http://" + dataService.serverIP + "/setlock/" + dataService.getPrevNode() + "/1", Integer.class);
                         }
                     }
                 }

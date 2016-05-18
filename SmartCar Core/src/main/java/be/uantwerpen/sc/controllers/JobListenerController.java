@@ -30,9 +30,7 @@ public class JobListenerController {
             return new ResponseEntity("No Job",HttpStatus.NO_CONTENT);
         }else{
             System.out.println("Job = " + job);
-            synchronized (this) {
-                cCommandSender.sendCommand(job);
-            }
+            cCommandSender.sendCommand(job);
             return new ResponseEntity("ok",HttpStatus.OK);
         }
     }
