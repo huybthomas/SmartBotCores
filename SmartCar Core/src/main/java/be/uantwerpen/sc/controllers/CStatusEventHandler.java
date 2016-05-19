@@ -73,7 +73,8 @@ public class CStatusEventHandler implements Runnable{
                         dataService.setTag(tag);
                         dataService.robotBusy = false;
                         dataService.setCurrentLocationAccordingTag();
-                        dataService.locationUpdated = true;
+                        if(!tag.trim().equals("NONE")){
+                            dataService.locationUpdated = true;}
                     }
                 }if (s.startsWith("TRAFFIC_LIGHT")){
                     String trafficlightStatus = s.split(" ", 2)[1];

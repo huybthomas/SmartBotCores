@@ -51,6 +51,7 @@ public class DataService {
 
     public boolean robotBusy = false;
     public boolean locationUpdated = true;
+    public int previousTag;
 
     public String trafficLightStatus;
 

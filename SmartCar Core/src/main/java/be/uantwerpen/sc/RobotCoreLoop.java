@@ -79,6 +79,13 @@ public class RobotCoreLoop implements Runnable{
         while (!Thread.interrupted() && pathplanningType.getType() == PathplanningEnum.RANDOM) {
             //Use pathplanning (Described in Interface)
             if (queueService.getContentQueue().isEmpty() && dataService.locationUpdated) {
+                queueService.insertJob("TAG READ UID");
+                try {
+                    Thread.sleep(200);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dataService.setCurrentLocationAccordingTag();
                 dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), 12));
                 //Parse Map
                 //dataService.navigationParser.parseMap();
