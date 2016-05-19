@@ -32,6 +32,8 @@ public class RobotCoreLoop implements Runnable{
 
     public IPathplanning pathplanning;
 
+    private  boolean first;
+
     public RobotCoreLoop(QueueService queueService, MapController mapController, PathController pathController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;
         this.mapController = mapController;
@@ -39,10 +41,11 @@ public class RobotCoreLoop implements Runnable{
         this.pathplanningType = pathplanningType;
         this.dataService = dataService;
         //Setup type
+        first = true;
         Terminal.printTerminalInfo("Selected PathplanningType: " + pathplanningType.getType().name());
     }
 
-    public void run(){
+    public void run() {
         //getRobotId
         RestTemplate restTemplate = new RestTemplate();
         Long robotID = restTemplate.getForObject("http://" + dataService.serverIP + "/bot/newRobot", Long.class);
@@ -53,11 +56,11 @@ public class RobotCoreLoop implements Runnable{
         //Wait for tag read
         synchronized (this) {
             while (dataService.getTag().trim().equals("NONE") || dataService.getTag().equals("NO_TAG")) {
-                try{
+                try {
                     //Read tag
                     queueService.insertJob("TAG READ UID");
                     Thread.sleep(2000);
-                }catch(InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -73,21 +76,53 @@ public class RobotCoreLoop implements Runnable{
 
         dataService.map = mapController.getMap();
         dataService.setLookingCoordiante("N");
-
-        while(!Thread.interrupted() && pathplanningType.getType() == PathplanningEnum.RANDOM) {
+        while (!Thread.interrupted() && pathplanningType.getType() == PathplanningEnum.RANDOM) {
             //Use pathplanning (Described in Interface)
+            if (queueService.getContentQueue().isEmpty() && dataService.locationUpdated) {
+                dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), 12));
+                //Parse Map
+                //dataService.navigationParser.parseMap();
+                dataService.navigationParser.parseRandomMap(dataService);
+
+                //Setup for driving
+                int start = dataService.navigationParser.list.get(0).getId();
+                int end = dataService.navigationParser.list.get(1).getId();
+                dataService.setNextNode(end);
+                dataService.setPrevNode(start);
+                if (first) {
+                    queueService.insertJob("DRIVE FOLLOWLINE");
+                    queueService.insertJob("DRIVE FORWARD 50");
+                    first = false;
+                }
+                //Process map
+                for (DriveDir command : dataService.navigationParser.commands) {
+                    queueService.insertJob(command.toString());
+                }
+                queueService.insertJob("TAG READ UID");
+                dataService.locationUpdated = false;
+            }else if(queueService.getContentQueue().isEmpty()){
+                queueService.insertJob("TAG READ UID");
+            }
+            try {
+                Thread.sleep(200);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (pathplanningType.getType() == PathplanningEnum.DIJKSTRA) {
             dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), 12));
             //Parse Map
-            //dataService.navigationParser.parseMap();
-            dataService.navigationParser.parseRandomMap(dataService);
+            dataService.navigationParser.parseMap();
+            //dataService.navigationParser.parseRandomMap(dataService);
 
             //Setup for driving
             int start = dataService.navigationParser.list.get(0).getId();
             int end = dataService.navigationParser.list.get(1).getId();
             dataService.setNextNode(end);
             dataService.setPrevNode(start);
-            //queueService.insertJob("DRIVE FOLLOWLINE");
-            //queueService.insertJob("DRIVE FORWARD 50");
+            queueService.insertJob("DRIVE FOLLOWLINE");
+            queueService.insertJob("DRIVE FORWARD 50");
 
             //Process map
             for (DriveDir command : dataService.navigationParser.commands) {
@@ -96,13 +131,16 @@ public class RobotCoreLoop implements Runnable{
         }
     }
 
+
     private void setupInterface(){
         switch (pathplanningType.getType()){
             case DIJKSTRA:
                 pathplanning = new PathplanningService();
+                dataService.setPathplanningEnum(PathplanningEnum.DIJKSTRA);
                 break;
             case RANDOM:
                 pathplanning = new RandomPathPlanning(pathController);
+                dataService.setPathplanningEnum(PathplanningEnum.RANDOM);
                 break;
             default:
                 //Dijkstra
@@ -110,7 +148,7 @@ public class RobotCoreLoop implements Runnable{
         }
     }
 
-    private void updateStartLocation(){
+    public void updateStartLocation(){
         switch(dataService.getTag().trim()){
             case "04 70 39 32 06 27 80":
                 dataService.setCurrentLocation(1);
