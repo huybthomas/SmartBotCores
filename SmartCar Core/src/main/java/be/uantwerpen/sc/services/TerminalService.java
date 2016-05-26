@@ -1,16 +1,19 @@
+
 package be.uantwerpen.sc.services;
 
+import be.uantwerpen.sc.RobotCoreLoop;
 import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.controllers.PathController;
 import be.uantwerpen.sc.models.map.Path;
-import be.uantwerpen.sc.tools.DriveDir;
-import be.uantwerpen.sc.tools.IPathplanning;
-import be.uantwerpen.sc.tools.NavigationParser;
-import be.uantwerpen.sc.tools.Terminal;
+import be.uantwerpen.sc.tools.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * Created by Thomas on 14/04/2016.
@@ -27,6 +30,10 @@ public class TerminalService
     private CCommandSender sender;
     @Autowired
     private QueueService queueService;
+    @Autowired
+    private DataService dataService;
+
+    private RobotCoreLoop robotCoreLoop;
 
     public TerminalService()
     {
@@ -40,8 +47,9 @@ public class TerminalService
         };
     }
 
-    public void systemReady()
+    public void systemReady(RobotCoreLoop robotCoreLoop)
     {
+        this.robotCoreLoop = robotCoreLoop;
         terminal.printTerminal(" :: SmartCar Core - 2016 ::  -  Developed by: Huybrechts T., Janssens A., Joosens D., Vervliet N.");
         terminal.printTerminal("Type 'help' to display the possible commands.");
         terminal.activateTerminal();
@@ -55,23 +63,13 @@ public class TerminalService
         {
             case "navigate":
                 try {
-                    String command2 = commandString.split(" ", 2)[1].toLowerCase();
-
-                    String start = command2.split(" ", 2)[0].toLowerCase();
-                    String end = command2.split(" ", 2)[1].toLowerCase();
-                    if (start == end) {
-                        terminal.printTerminal("Start cannot equal end.");
-                    } else if (start == "" || end == "") {
+                    String end = commandString.split(" ", 2)[1].toLowerCase();
+                    try {
+                        int endInt = Integer.parseInt(end);
+                        startPathPlanning(endInt);
+                    } catch (NumberFormatException e) {
+                        terminal.printTerminalError(e.getMessage());
                         terminal.printTerminal("Usage: navigate start end");
-                    } else {
-                        try {
-                            int startInt = Integer.parseInt(start);
-                            int endInt = Integer.parseInt(end);
-                            startPathPlanning(startInt, endInt);
-                        } catch (NumberFormatException e) {
-                            terminal.printTerminalError(e.getMessage());
-                            terminal.printTerminal("Usage: navigate start end");
-                        }
                     }
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
@@ -97,6 +95,13 @@ public class TerminalService
                             terminal.printTerminal("Usage: navigate start end");
                         }
                     }
+                }catch(ArrayIndexOutOfBoundsException e){
+                    terminal.printTerminal("Usage: navigate start end");
+                }
+                break;
+            case "random":
+                try {
+                    getRandomPath();
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
                 }
@@ -158,6 +163,7 @@ public class TerminalService
                 terminal.printTerminal("-------------------");
                 terminal.printTerminal("'navigate {start} {end}': navigates the robot from point {start} to {end}");
                 terminal.printTerminal("'path {start} {end}': get the path from the server");
+                terminal.printTerminal("'random': get random path from the server from current location");
                 terminal.printTerminal("'simulate {true/false}': activate he simulator");
                 terminal.printTerminal("'checkQueue': check content of the queue");
                 terminal.printTerminal("'exit' : shutdown the core.");
@@ -166,25 +172,38 @@ public class TerminalService
         }
     }
 
-    private void startPathPlanning(int start, int end){
-        terminal.printTerminal("Starting pathplanning from point " + start + " to " + end);
-        //get Map from server
-        //Send map + start + end to pathplanning
+    private void startPathPlanning(int end){
+        terminal.printTerminal("Starting pathplanning from point " + dataService.getCurrentLocation() + " to " + end);
+        dataService.navigationParser = new NavigationParser(robotCoreLoop.pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(), end));
+        //Parse Map
+        dataService.navigationParser.parseMap();
 
-       /* Vertex[] list = mapController.getPath();
-        List<Vertex> list2 = Arrays.asList(list);
-        NavigationParser navigationParser = new NavigationParser(list2);
-        navigationParser.parseMap();*/
-        IPathplanning pathplanning = new PathplanningService();
-        NavigationParser navigationParser = new NavigationParser(pathplanning.Calculatepath(mapController.getMap(),start,end));
-        for (DriveDir command : navigationParser.parseMap()){
+        //Setup for driving
+        dataService.setNextNode(dataService.navigationParser.list.get(1).getId());
+        dataService.setPrevNode(dataService.navigationParser.list.get(0).getId());
+        queueService.insertJob("DRIVE FOLLOWLINE");
+        queueService.insertJob("DRIVE FORWARD 50");
+
+        //Process map
+        for (DriveDir command : dataService.navigationParser.commands) {
             queueService.insertJob(command.toString());
         }
-        System.out.println(navigationParser.parseMap().toString());
     }
 
     private void getPath(int start, int end){
         Path path = pathController.getPath(start, end);
         System.out.println(path.toString());
+    }
+
+    private void getRandomPath(){
+        int currentLocation = dataService.getCurrentLocation();
+        if(currentLocation < 0) {
+            currentLocation = 4;
+            dataService.setLookingCoordiante("N");
+        }
+        List<Vertex> path = pathController.getRandomPath(currentLocation).getPath();
+        NavigationParser navigationParser = new NavigationParser(path);
+        //System.out.println(navigationParser.parseRandomMap().toString());
+
     }
 }

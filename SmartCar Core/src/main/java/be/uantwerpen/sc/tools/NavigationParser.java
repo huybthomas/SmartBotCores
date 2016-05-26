@@ -1,6 +1,8 @@
 package be.uantwerpen.sc.tools;
 
 import be.uantwerpen.sc.models.map.Map;
+import be.uantwerpen.sc.services.DataService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -9,6 +11,8 @@ import java.util.*;
  */
 public class NavigationParser {
 
+    @Autowired
+    private DataService dataService;
     public List<Vertex> list;
     public Queue<DriveDir> commands = new LinkedList<DriveDir>();
 
@@ -140,6 +144,126 @@ public class NavigationParser {
                     
                 }
                 
+        }
+
+        //Invalid direction
+        return null;
+    }
+
+    public Queue<DriveDir> parseRandomMap() {
+        if (list.isEmpty()) {
+            Terminal.printTerminalError("Cannot parse empty map");
+        } else {
+            int i = 0;
+            for (Edge e : list.get(0).getAdjacencies()) {
+                if (e.getTarget() == list.get(1).getId()) {
+                    break;
+                }
+                i++;
+            }
+            if (dataService.getLookingCoordiante().equals(list.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection())) {
+                //dataService.setLookingCoordiante(path.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection());
+                System.out.println(parseMap().toString());
+
+            } else {
+                //Queue<DriveDir> commands = new LinkedList<DriveDir>();
+                commands.add(relDirRandom(dataService.getLookingCoordiante(), list.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection()));
+                //NavigationParser navigationParser = new NavigationParser(path);
+                System.out.println(commands.toString());
+                System.out.println(parseMap().toString());
+                switch (list.get(0).getAdjacencies().get(i).getLinkEntity().getLid()) {
+                    case 15:
+                        dataService.setLookingCoordiante("E");
+                        break;
+                    case 24:
+                        dataService.setLookingCoordiante("N");
+                        break;
+                    case 27:
+                        dataService.setLookingCoordiante("E");
+                        break;
+                    case 43:
+                        dataService.setLookingCoordiante("E");
+                        break;
+                    case 51:
+                        dataService.setLookingCoordiante("N");
+                        break;
+                    default:
+                        dataService.setLookingCoordiante(list.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection());
+                }
+            }
+            dataService.setCurrentLocation(list.get(1).getId());
+        }
+        return commands;
+    }
+
+    private DriveDir relDirRandom(String startDir, String stopDir){
+        switch(startDir)
+        {
+            //From NORTH
+            case "N":
+                switch(stopDir)
+                {
+                    //Go EAST
+                    case "E":
+                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn LEFT
+                    //Go SOUTH
+                    case "S":
+                        return new DriveDir(DriveDirEnum.TURN);   //Go STRAIGHT
+                    //Go WEST
+                    case "W":
+                        return new DriveDir(DriveDirEnum.LEFT);   //Turn RIGHT
+
+                }
+
+                //From EAST
+            case "E":
+                switch(stopDir)
+                {
+                    //Go NORTH
+                    case "N":
+                        return new DriveDir(DriveDirEnum.LEFT);   //Turn RIGHT
+                    //Go SOUTH
+                    case "S":
+                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn LEFT
+                    //Go WEST
+                    case "W":
+                        return new DriveDir(DriveDirEnum.TURN);   //Go STRAIGHT
+                }
+
+                //From SOUTH
+            case "S":
+                switch(stopDir)
+                {
+                    //Go NORTH
+                    case "N":
+                        return new DriveDir(DriveDirEnum.TURN);   //Go STRAIGHT
+                    //Go EAST
+                    case "E":
+                        return new DriveDir(DriveDirEnum.LEFT);   //Turn RIGHT
+                    //Go WEST
+                    case "W":
+                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn LEFT
+
+                }
+
+                //From WEST
+            case "W":
+                switch(stopDir)
+                {
+                    //Go NORTH
+                    case "N":
+                        return new DriveDir(DriveDirEnum.RIGHT);   //Turn LEFT
+
+                    //Go EAST
+                    case "E":
+                        return new DriveDir(DriveDirEnum.TURN);   //Go STRAIGHT
+
+                    //Go SOUTH
+                    case "S":
+                        return new DriveDir(DriveDirEnum.LEFT);   //Turn RIGHT
+
+                }
+
         }
 
         //Invalid direction

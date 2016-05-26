@@ -70,4 +70,10 @@ public class PathplanningService implements IPathplanning {
         //return ("Distance to " + vertexes.get(stop-1) + ": " + vertexes.get(stop-1).minDistance) + ( "Path: " + path);
         return path;
     }
+
+    /*@Override
+    public Vertex nextRandomPath(Map map, int start) {
+
+        return null;
+    }*/
 }

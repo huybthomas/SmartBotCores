@@ -10,6 +10,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.client.mqttv3.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,10 @@ public class mqttLocationPublisher {
         int qos             = 2;
         String topic        = "BOT/" + dataService.getRobotID() + "/Location";
         String broker       = "tcp://146.175.139.66:1883";
-        String clientId     = dataService.getRobotID().toString();
+        String clientId = "-1";
+        if(dataService.getRobotID() != null) {
+            clientId = dataService.getRobotID().toString();
+        }
         MemoryPersistence persistence = new MemoryPersistence();
 
         if(dataService.getRobotID() != null) {

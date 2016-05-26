@@ -5,7 +5,6 @@ package be.uantwerpen.sc.tools;
  */
 public enum PathplanningEnum {
     DIJKSTRA,
-    TERMINAL,
     SERVER,
     RANDOM
 }

@@ -37,23 +37,23 @@ public class QueueConsumer implements Runnable
                 if(queueService.getContentQueue().size() == 0){
                     //System.out.println("queue is empty");
                 }else{
-                    Terminal.printTerminal("PrevNode: " + dataService.getPrevNode());
+                    //Terminal.printTerminal("PrevNode: " + dataService.getPrevNode());
                     if(!first) {
                         //System.out.println(queueService.getContentQueue().toString());
                         //check if robot has to wait before point
-                        Terminal.printTerminal("Distance: " + dataService.getMillis() + "\nStopDistance: " + (dataService.getLinkMillis() - 150));
-                        Terminal.printTerminal("Permission:" + dataService.hasPermission());
+                        //Terminal.printTerminal("Distance: " + dataService.getMillis() + "\nStopDistance: " + (dataService.getLinkMillis() - 150));
+                        //Terminal.printTerminal("Permission:" + dataService.hasPermission());
                         if (dataService.getMillis() > dataService.getLinkMillis() - 150 && !(dataService.hasPermission() == dataService.getNextNode())) {
                             //Pause robot
                             sender.sendCommand("DRIVE PAUSE");
                             //Ask for permission
                             RestTemplate rest = new RestTemplate();
                             boolean response = false;
+                            Terminal.printTerminal("Lock Requested");
                             while (!response) {
-                                Terminal.printTerminal("Lock Requested");
                                 response = rest.getForObject("http://" + dataService.serverIP + "/point/requestlock/" + dataService.getNextNode(), boolean.class);
                                 if (!response) {
-                                    Terminal.printTerminal("Lock Denied: " + dataService.getNextNode());
+                                    //Terminal.printTerminal("Lock Denied: " + dataService.getNextNode());
                                     Thread.sleep(200);
                                 }
                             }

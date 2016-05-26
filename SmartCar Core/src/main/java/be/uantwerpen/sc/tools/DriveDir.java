@@ -22,6 +22,8 @@ public class DriveDir {
                 return "DRIVE TURN R";
             case FOLLOW:
                 return "DRIVE FOLLOWLINE";
+            case TURN:
+                return "DRIVE ROTATE R 180 ";
             default:
                 return "MISSING";
         }

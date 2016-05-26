@@ -7,5 +7,6 @@ public enum DriveDirEnum {
     FORWARD,
     LEFT,
     RIGHT,
-    FOLLOW
+    FOLLOW,
+    TURN
 }
