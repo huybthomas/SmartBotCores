@@ -2,7 +2,9 @@ package be.uantwerpen.sc.controllers;
 
 import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.models.map.Path;
+import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.tools.Vertex;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,12 +20,15 @@ import java.util.List;
 @RequestMapping(value = "/path/")
 public class PathController {
 
+    @Autowired
+    DataService dataService;
+
     @RequestMapping(method = RequestMethod.GET)
     public Path getPath(int start, int stop){
         String coreIP = "http://localhost:1994";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Path> responseList;
-        responseList = restTemplate.getForEntity(coreIP.toString()+"/map/"+Integer.toString(start)+"/path/"+Integer.toString(stop), Path.class);
+        responseList = restTemplate.getForEntity("http://"+dataService.serverIP+"/map/"+Integer.toString(start)+"/path/"+Integer.toString(stop), Path.class);
         Path path = responseList.getBody();
         return path;
     }
@@ -33,7 +38,7 @@ public class PathController {
         String coreIP = "http://localhost:1994";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Path> responseList;
-        responseList = restTemplate.getForEntity(coreIP.toString()+"/map/random/"+Integer.toString(start), Path.class);
+        responseList = restTemplate.getForEntity("http://"+dataService.serverIP+"/map/random/"+Integer.toString(start), Path.class);
         Path path = responseList.getBody();
         return path;
     }

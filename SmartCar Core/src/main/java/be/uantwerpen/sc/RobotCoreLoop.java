@@ -3,6 +3,7 @@ package be.uantwerpen.sc;
 import be.uantwerpen.sc.controllers.CCommandSender;
 import be.uantwerpen.sc.controllers.CStatusEventHandler;
 import be.uantwerpen.sc.controllers.MapController;
+import be.uantwerpen.sc.controllers.PathController;
 import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.PathplanningService;
@@ -28,21 +29,26 @@ public class RobotCoreLoop implements Runnable{
     @Autowired
     DataService dataService;
     private MapController mapController;
+    private PathController pathController;
     @Autowired
     private PathplanningType pathplanningType;
 
     public IPathplanning pathplanning;
 
-    public RobotCoreLoop(QueueService queueService, MapController mapController, PathplanningType pathplanningType, DataService dataService){
+    private  boolean first;
+
+    public RobotCoreLoop(QueueService queueService, MapController mapController, PathController pathController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;
         this.mapController = mapController;
+        this.pathController = pathController;
         this.pathplanningType = pathplanningType;
         this.dataService = dataService;
         //Setup type
+        first = true;
         Terminal.printTerminalInfo("Selected PathplanningType: " + pathplanningType.getType().name());
     }
 
-    public void run(){
+    public void run() {
         //getRobotId
         RestTemplate restTemplate = new RestTemplate();
         Long robotID = restTemplate.getForObject("http://" + dataService.serverIP + "/bot/newRobot", Long.class);
@@ -53,11 +59,11 @@ public class RobotCoreLoop implements Runnable{
         //Wait for tag read
         synchronized (this) {
             while (dataService.getTag().trim().equals("NONE") || dataService.getTag().equals("NO_TAG")) {
-                try{
+                try {
                     //Read tag
                     queueService.insertJob("TAG READ UID");
                     Thread.sleep(2000);
-                }catch(InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -72,13 +78,53 @@ public class RobotCoreLoop implements Runnable{
         setupInterface();
 
         dataService.map = mapController.getMap();
-
-        if(pathplanningType.getType() != PathplanningEnum.DIJKSTRA) {
-
+        dataService.setLookingCoordiante("N");
+        while (!Thread.interrupted() && pathplanningType.getType() == PathplanningEnum.RANDOM) {
             //Use pathplanning (Described in Interface)
+            if (queueService.getContentQueue().isEmpty() && dataService.locationUpdated) {
+                queueService.insertJob("TAG READ UID");
+                try {
+                    Thread.sleep(200);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dataService.setCurrentLocationAccordingTag();
+                dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), 12));
+                //Parse Map
+                //dataService.navigationParser.parseMap();
+                dataService.navigationParser.parseRandomMap(dataService);
+
+                //Setup for driving
+                int start = dataService.navigationParser.list.get(0).getId();
+                int end = dataService.navigationParser.list.get(1).getId();
+                dataService.setNextNode(end);
+                dataService.setPrevNode(start);
+                if (first) {
+                    queueService.insertJob("DRIVE FOLLOWLINE");
+                    queueService.insertJob("DRIVE FORWARD 50");
+                    first = false;
+                }
+                //Process map
+                for (DriveDir command : dataService.navigationParser.commands) {
+                    queueService.insertJob(command.toString());
+                }
+                queueService.insertJob("TAG READ UID");
+                dataService.locationUpdated = false;
+            }else if(queueService.getContentQueue().isEmpty()){
+                queueService.insertJob("TAG READ UID");
+            }
+            try {
+                Thread.sleep(200);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (pathplanningType.getType() == PathplanningEnum.DIJKSTRA) {
             dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), 12));
             //Parse Map
             dataService.navigationParser.parseMap();
+            //dataService.navigationParser.parseRandomMap(dataService);
 
             //Setup for driving
             int start = dataService.navigationParser.list.get(0).getId();
@@ -95,13 +141,24 @@ public class RobotCoreLoop implements Runnable{
         }
     }
 
+
     private void setupInterface(){
-        pathplanning = new PathplanningService();
-
-
+        switch (pathplanningType.getType()){
+            case DIJKSTRA:
+                pathplanning = new PathplanningService();
+                dataService.setPathplanningEnum(PathplanningEnum.DIJKSTRA);
+                break;
+            case RANDOM:
+                pathplanning = new RandomPathPlanning(pathController);
+                dataService.setPathplanningEnum(PathplanningEnum.RANDOM);
+                break;
+            default:
+                //Dijkstra
+                pathplanning = new PathplanningService();
+        }
     }
 
-    private void updateStartLocation(){
+    public void updateStartLocation(){
         switch(dataService.getTag().trim()){
             case "04 70 39 32 06 27 80":
                 dataService.setCurrentLocation(1);

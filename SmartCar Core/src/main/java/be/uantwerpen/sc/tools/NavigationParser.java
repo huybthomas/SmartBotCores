@@ -150,7 +150,7 @@ public class NavigationParser {
         return null;
     }
 
-    public Queue<DriveDir> parseRandomMap() {
+    public Queue<DriveDir> parseRandomMap(DataService dataService) {
         if (list.isEmpty()) {
             Terminal.printTerminalError("Cannot parse empty map");
         } else {
@@ -163,14 +163,15 @@ public class NavigationParser {
             }
             if (dataService.getLookingCoordiante().equals(list.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection())) {
                 //dataService.setLookingCoordiante(path.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection());
-                System.out.println(parseMap().toString());
-
+                commands.add(new DriveDir(DriveDirEnum.FORWARD));
+                commands.add(new DriveDir(DriveDirEnum.FOLLOW));//System.out.println(parseMap().toString());
             } else {
                 //Queue<DriveDir> commands = new LinkedList<DriveDir>();
                 commands.add(relDirRandom(dataService.getLookingCoordiante(), list.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection()));
+                commands.add(new DriveDir(DriveDirEnum.FOLLOW));
                 //NavigationParser navigationParser = new NavigationParser(path);
-                System.out.println(commands.toString());
-                System.out.println(parseMap().toString());
+                //System.out.println(commands.toString());
+                //System.out.println(parseMap().toString());
                 switch (list.get(0).getAdjacencies().get(i).getLinkEntity().getLid()) {
                     case 15:
                         dataService.setLookingCoordiante("E");
@@ -191,7 +192,8 @@ public class NavigationParser {
                         dataService.setLookingCoordiante(list.get(0).getAdjacencies().get(i).getLinkEntity().getStartDirection());
                 }
             }
-            dataService.setCurrentLocation(list.get(1).getId());
+
+            //dataService.setCurrentLocation(list.get(1).getId());
         }
         return commands;
     }

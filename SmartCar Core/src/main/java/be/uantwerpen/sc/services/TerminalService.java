@@ -1,4 +1,3 @@
-
 package be.uantwerpen.sc.services;
 
 import be.uantwerpen.sc.RobotCoreLoop;
@@ -176,7 +175,8 @@ public class TerminalService
         terminal.printTerminal("Starting pathplanning from point " + dataService.getCurrentLocation() + " to " + end);
         dataService.navigationParser = new NavigationParser(robotCoreLoop.pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(), end));
         //Parse Map
-        dataService.navigationParser.parseMap();
+        //dataService.navigationParser.parseMap();
+        dataService.navigationParser.parseRandomMap(dataService);
 
         //Setup for driving
         dataService.setNextNode(dataService.navigationParser.list.get(1).getId());
