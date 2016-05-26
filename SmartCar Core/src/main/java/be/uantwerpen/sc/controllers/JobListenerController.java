@@ -16,7 +16,8 @@ import java.util.concurrent.BlockingQueue;
 public class JobListenerController {
 
     @Autowired
-    CCommandSender cCommandSender;
+    private CCommandSender cCommandSender;
+
     @Autowired
     private QueueService queueService;
     private BlockingQueue<String> jobQueue;
