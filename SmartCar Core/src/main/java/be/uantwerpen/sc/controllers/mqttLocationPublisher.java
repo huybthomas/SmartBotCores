@@ -7,6 +7,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,11 +19,18 @@ public class mqttLocationPublisher
     @Autowired
     private DataService dataService;
 
-    public void publishLocation(Integer location){
+    @Value("{$mqtt.ip}")
+    private String mqttIP;
+
+    @Value("{$mqtt.port}")
+    private int mqttPort;
+
+    public void publishLocation(Integer location)
+    {
         String content      = location.toString();
         int qos             = 2;
         String topic        = "BOT/" + dataService.getRobotID() + "/Location";
-        String broker       = "tcp://146.175.139.66:1883";
+        String broker       = "tcp://" + mqttIP + ":" + mqttPort;
         String clientId = "-1";
         if(dataService.getRobotID() != null) {
             clientId = dataService.getRobotID().toString();

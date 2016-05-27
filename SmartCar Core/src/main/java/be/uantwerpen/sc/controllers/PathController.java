@@ -28,7 +28,6 @@ public class PathController
 
     @RequestMapping(method = RequestMethod.GET)
     public Path getPath(int start, int stop){
-        String coreIP = "http://localhost:1994";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Path> responseList;
         responseList = restTemplate.getForEntity("http://" + serverIP + ":" + serverPort + "/map/"+Integer.toString(start)+"/path/"+Integer.toString(stop), Path.class);
@@ -38,7 +37,6 @@ public class PathController
 
     @RequestMapping(value = "random",method = RequestMethod.GET)
     public Path getRandomPath(int start){
-        String coreIP = "http://localhost:1994";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Path> responseList;
         responseList = restTemplate.getForEntity("http://" + serverIP + ":" + serverPort + "/map/random/"+Integer.toString(start), Path.class);
