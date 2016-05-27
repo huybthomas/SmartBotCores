@@ -1,17 +1,13 @@
 package be.uantwerpen.sc.controllers;
 
-import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.models.map.Path;
 import be.uantwerpen.sc.services.DataService;
-import be.uantwerpen.sc.tools.Vertex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 /**
  * Created by Niels on 10/05/2016.

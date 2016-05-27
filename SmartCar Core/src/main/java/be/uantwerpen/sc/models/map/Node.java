@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * Created by Niels on 3/04/2016.
  */
-public class Node {
-
+public class Node
+{
     private int nodeId;
     private PointEntity pointEntity;
     private List<LinkEntity> neighbours;

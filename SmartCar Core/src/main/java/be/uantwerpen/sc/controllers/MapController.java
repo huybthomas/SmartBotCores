@@ -3,29 +3,19 @@ package be.uantwerpen.sc.controllers;
 import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.models.map.MapJson;
 import be.uantwerpen.sc.tools.Vertex;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-
 /**
  * Created by Niels on 24/04/2016.
  */
 @RestController
 @RequestMapping(value = "/map/")
-public class MapController {
-
+public class MapController
+{
     /*@RequestMapping(method = RequestMethod.GET)
     public String getMap() throws IOException {
         System.out.println("DoSomething");

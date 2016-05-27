@@ -2,7 +2,6 @@ package be.uantwerpen.sc.services;
 
 import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.tools.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

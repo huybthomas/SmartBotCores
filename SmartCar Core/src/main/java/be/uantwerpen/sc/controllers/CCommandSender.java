@@ -7,14 +7,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 /**
  * Created by Arthur on 2/05/2016.
  */
 @Service
-public class CCommandSender {
-
+public class CCommandSender
+{
     Socket socket;
     DataOutputStream dOut;
     DataInputStream dIn;

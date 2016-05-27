@@ -1,12 +1,9 @@
 package be.uantwerpen.sc.services;
 
-import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.controllers.PathController;
 import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.tools.IPathplanning;
 import be.uantwerpen.sc.tools.Vertex;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -14,9 +11,8 @@ import java.util.List;
  * Created by Arthur on 18/05/2016.
  */
 
-public class RandomPathPlanning implements IPathplanning {
-
-
+public class RandomPathPlanning implements IPathplanning
+{
     PathController pathController;
 
     public RandomPathPlanning(PathController pathController) {

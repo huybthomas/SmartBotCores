@@ -1,22 +1,20 @@
 package be.uantwerpen.sc.controllers;
 
-/**
- * Created by Arthur on 9/05/2016.
- */
-
 import be.uantwerpen.sc.services.DataService;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.eclipse.paho.client.mqttv3.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Created by Arthur on 9/05/2016.
+ */
 @Service
-public class mqttLocationPublisher {
-
+public class mqttLocationPublisher
+{
     @Autowired
     private DataService dataService;
 

@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * Created by Niels on 14/04/2016.
  */
-public class MapJson {
-
+public class MapJson
+{
     private List<NodeJson> nodeJsons;
     private int size;
 

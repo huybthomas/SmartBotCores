@@ -6,8 +6,8 @@ import be.uantwerpen.sc.models.PointEntity;
 /**
  * Created by Niels on 14/04/2016.
  */
-public class Neighbour {
-
+public class Neighbour
+{
     private PointEntity pointEntity;
     private int length;
     private int weight;

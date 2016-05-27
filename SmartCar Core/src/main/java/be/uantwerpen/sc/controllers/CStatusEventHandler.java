@@ -1,26 +1,26 @@
 package be.uantwerpen.sc.controllers;
 
 import be.uantwerpen.sc.services.DataService;
-import be.uantwerpen.sc.tools.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.DataInputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
  * Created by Arthur on 4/05/2016.
  */
 @Service
-public class CStatusEventHandler implements Runnable{
+public class CStatusEventHandler implements Runnable
+{
+    @Autowired
+    DataService dataService;
+
+    @Autowired
+    mqttLocationPublisher locationPublisher;
 
     Socket socket;
     DataInputStream dIn;
-    @Autowired
-    DataService dataService;
-    @Autowired
-    mqttLocationPublisher locationPublisher;
 
     public CStatusEventHandler(){
         try{

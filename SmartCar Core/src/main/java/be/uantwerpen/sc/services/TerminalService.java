@@ -21,6 +21,7 @@ import java.util.Queue;
 public class TerminalService
 {
     private Terminal terminal;
+
     @Autowired
     private MapController mapController;
     @Autowired

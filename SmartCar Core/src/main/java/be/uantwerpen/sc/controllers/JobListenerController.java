@@ -13,13 +13,14 @@ import java.util.concurrent.BlockingQueue;
  * Created by Niels on 4/05/2016.
  */
 @RestController
-public class JobListenerController {
-
+public class JobListenerController
+{
     @Autowired
     private CCommandSender cCommandSender;
 
     @Autowired
     private QueueService queueService;
+
     private BlockingQueue<String> jobQueue;
 
     @RequestMapping(value = "/job/", method = RequestMethod.POST)

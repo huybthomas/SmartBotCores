@@ -3,8 +3,8 @@ package be.uantwerpen.sc.models;
 /**
  * Created by Niels on 24/03/2016.
  */
-
-public class PointEntity {
+public class PointEntity
+{
     private int pid;
     private String rfid;
     private String type;

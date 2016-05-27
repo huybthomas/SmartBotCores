@@ -13,8 +13,8 @@ import java.util.List;
 /**
  * Created by Arthur on 24/04/2016.
  */
-public class PathplanningService implements IPathplanning {
-
+public class PathplanningService implements IPathplanning
+{
     private Dijkstra dijkstra;
 
     public PathplanningService()

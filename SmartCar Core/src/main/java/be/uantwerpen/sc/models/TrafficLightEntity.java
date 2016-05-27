@@ -3,8 +3,8 @@ package be.uantwerpen.sc.models;
 /**
  * Created by Niels on 24/03/2016.
  */
-
-public class TrafficLightEntity {
+public class TrafficLightEntity
+{
     private int tlid;
     private String direction;
     private String state;

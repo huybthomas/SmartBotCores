@@ -3,14 +3,13 @@ package be.uantwerpen.sc.models;
 /**
  * Created by Niels on 24/03/2016.
  */
-
-public class BotEntity {
+public class BotEntity
+{
     private Long rid;
     private Integer jobId;
     private Integer percentageCompleted;
     private String state;
     private LinkEntity linkId;
-
 
     public Long getRid() {
         return rid;

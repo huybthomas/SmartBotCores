@@ -7,8 +7,8 @@ import java.util.List;
 /**
  * Created by Niels on 10/05/2016.
  */
-public class Path {
-
+public class Path
+{
     private List<Vertex> path;
 
     public List<Vertex> getPath() {

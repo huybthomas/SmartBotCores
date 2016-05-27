@@ -21,41 +21,47 @@ import be.uantwerpen.sc.services.TerminalService;
 public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
 {
     @Autowired
-    TerminalService terminalService;
+    private TerminalService terminalService;
+
     @Autowired
-    QueueService queueService;
+    private QueueService queueService;
+
     @Autowired
-    CCommandSender cCommandSender;
+    private CCommandSender cCommandSender;
+
     @Autowired
-    MapController mapController;
+    private MapController mapController;
+
     @Autowired
-    PathController pathController;
+    private PathController pathController;
+
     @Autowired
     private PathplanningType pathplanningType;
-    @Autowired
-    CStatusEventHandler cStatusEventHandler;
-    @Autowired
-    DataService dataService;
-    @Autowired
-    mqttLocationPublisher locationPublisher;
 
-    /*@Autowired
-    CStatusEventHandler cStatusEventHandler;
     @Autowired
-    DataService dataService;*/
+    private CStatusEventHandler cStatusEventHandler;
 
-    RobotCoreLoop robotCoreLoop;
+    @Autowired
+    private DataService dataService;
+
+    @Autowired
+    private mqttLocationPublisher locationPublisher;
+
+    private RobotCoreLoop robotCoreLoop;
 
     //Run after Spring context initialization
     public void onApplicationEvent(ContextRefreshedEvent event)
     {
         robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathController, pathplanningType, dataService);
+
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
         CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
+
         new Thread(robotCoreLoop).start();
         new Thread(cStatusEventHandler).start();
         new Thread(queueConsumer).start();
         new Thread(cLocationPoller).start();
+
         terminalService.systemReady(robotCoreLoop);
     }
 }

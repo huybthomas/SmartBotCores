@@ -1,13 +1,12 @@
 package be.uantwerpen.sc.controllers;
 
-import be.uantwerpen.sc.services.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by Arthur on 11/05/2016.
  */
-public class CLocationPoller implements Runnable {
-
+public class CLocationPoller implements Runnable
+{
     @Autowired
     CCommandSender cCommandSender;
 

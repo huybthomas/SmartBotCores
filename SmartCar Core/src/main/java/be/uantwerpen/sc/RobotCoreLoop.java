@@ -12,25 +12,30 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Created by Arthur on 4/05/2016.
  */
-public class RobotCoreLoop implements Runnable{
+public class RobotCoreLoop implements Runnable
+{
+    @Autowired
+    private TerminalService terminalService;
 
     @Autowired
-    TerminalService terminalService;
-    private QueueService queueService;
-    @Autowired
     CStatusEventHandler cStatusEventHandler;
+
     @Autowired
     CCommandSender cCommandSender;
+
     @Autowired
     DataService dataService;
-    private MapController mapController;
-    private PathController pathController;
+
     @Autowired
     private PathplanningType pathplanningType;
 
+    private QueueService queueService;
+    private MapController mapController;
+    private PathController pathController;
+
     public IPathplanning pathplanning;
 
-    private  boolean first;
+    private boolean first;
 
     public RobotCoreLoop(QueueService queueService, MapController mapController, PathController pathController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;

@@ -1,9 +1,6 @@
 package be.uantwerpen.sc.services;
 
-import be.uantwerpen.sc.models.Job;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 

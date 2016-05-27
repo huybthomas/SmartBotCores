@@ -3,7 +3,8 @@ package be.uantwerpen.sc.models;
 /**
  * Created by Niels on 24/03/2016.
  */
-public class LinkEntity {
+public class LinkEntity
+{
     private int lid;
     private Integer length;
     private String startDirection;

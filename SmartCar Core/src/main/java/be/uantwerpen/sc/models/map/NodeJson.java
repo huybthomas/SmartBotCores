@@ -7,7 +7,8 @@ import java.util.List;
 /**
  * Created by Niels on 14/04/2016.
  */
-public class NodeJson {
+public class NodeJson
+{
     private PointEntity pointEntity;
     private List<Neighbour> neighbours;
 
