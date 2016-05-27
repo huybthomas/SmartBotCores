@@ -23,7 +23,7 @@ public class PathController
     @Value("${sc.core.ip}")
     private String serverIP;
 
-    @Value("${sc.core.port}")
+    @Value("#{new Integer(${sc.core.port})}")
     private int serverPort;
 
     @RequestMapping(method = RequestMethod.GET)

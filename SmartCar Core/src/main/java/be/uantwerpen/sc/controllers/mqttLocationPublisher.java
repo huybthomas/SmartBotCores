@@ -19,10 +19,10 @@ public class mqttLocationPublisher
     @Autowired
     private DataService dataService;
 
-    @Value("{$mqtt.ip}")
+    @Value("${mqtt.ip}")
     private String mqttIP;
 
-    @Value("{$mqtt.port}")
+    @Value("#{new Integer(${mqtt.port})}")
     private int mqttPort;
 
     public void publishLocation(Integer location)

@@ -15,7 +15,7 @@ public class DataService
     @Value("${sc.core.ip}")
     private String serverIP;
 
-    @Value("${sc.core.port}")
+    @Value("#{new Integer(${sc.core.port})}")
     private int serverPort;
 
     private Long robotID;
@@ -55,7 +55,6 @@ public class DataService
 
     public boolean robotBusy = false;
     public boolean locationUpdated = true;
-    public int previousTag;
 
     public String trafficLightStatus;
 

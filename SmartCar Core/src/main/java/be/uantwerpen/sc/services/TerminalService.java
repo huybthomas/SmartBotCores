@@ -23,8 +23,6 @@ public class TerminalService
     private Terminal terminal;
 
     @Autowired
-    private MapController mapController;
-    @Autowired
     private PathController pathController;
     @Autowired
     private CCommandSender sender;
