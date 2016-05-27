@@ -7,6 +7,7 @@ import be.uantwerpen.sc.controllers.PathController;
 import be.uantwerpen.sc.services.*;
 import be.uantwerpen.sc.tools.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -14,9 +15,6 @@ import org.springframework.web.client.RestTemplate;
  */
 public class RobotCoreLoop implements Runnable
 {
-    @Autowired
-    private TerminalService terminalService;
-
     @Autowired
     CStatusEventHandler cStatusEventHandler;
 
@@ -28,6 +26,12 @@ public class RobotCoreLoop implements Runnable
 
     @Autowired
     private PathplanningType pathplanningType;
+
+    @Value("${sc.core.ip}")
+    private String serverIP;
+
+    @Value("${sc.core.port}")
+    private int serverPort;
 
     private QueueService queueService;
     private MapController mapController;
@@ -51,7 +55,7 @@ public class RobotCoreLoop implements Runnable
     public void run() {
         //getRobotId
         RestTemplate restTemplate = new RestTemplate();
-        Long robotID = restTemplate.getForObject("http://" + dataService.serverIP + "/bot/newRobot", Long.class);
+        Long robotID = restTemplate.getForObject("http://" + serverIP + ":" + serverPort + "/bot/newRobot", Long.class);
         dataService.setRobotID(robotID);
 
         Terminal.printTerminal("Got ID: " + robotID);

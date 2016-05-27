@@ -61,7 +61,8 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
         new Thread(cStatusEventHandler).start();
         new Thread(queueConsumer).start();
         new Thread(cLocationPoller).start();
+        terminalService.setRobotCoreLoop(robotCoreLoop);
 
-        terminalService.systemReady(robotCoreLoop);
+        terminalService.systemReady();
     }
 }

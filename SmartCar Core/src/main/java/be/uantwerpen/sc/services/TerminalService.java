@@ -47,12 +47,17 @@ public class TerminalService
         };
     }
 
-    public void systemReady(RobotCoreLoop robotCoreLoop)
+    public void systemReady()
     {
-        this.robotCoreLoop = robotCoreLoop;
-        terminal.printTerminal(" :: SmartCar Core - 2016 ::  -  Developed by: Huybrechts T., Janssens A., Joosens D., Vervliet N.");
+        terminal.printTerminal(" :: SmartCar Core - 2016 ::  -  Developed by: Huybrechts T., Janssens A., Vervliet N.");
         terminal.printTerminal("Type 'help' to display the possible commands.");
         terminal.activateTerminal();
+    }
+
+    @Deprecated
+    public void setRobotCoreLoop(RobotCoreLoop robotCoreLoop)
+    {
+        this.robotCoreLoop = robotCoreLoop;
     }
 
     private void parseCommand(String commandString)

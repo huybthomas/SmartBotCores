@@ -2,6 +2,7 @@ package be.uantwerpen.sc.services;
 
 import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.tools.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -9,9 +10,13 @@ import org.springframework.web.client.RestTemplate;
  * Created by Arthur on 24/04/2016.
  */
 @Service
-public class DataService {
+public class DataService
+{
+    @Value("${sc.core.ip}")
+    private String serverIP;
 
-    public String serverIP = "146.175.140.86:1994";
+    @Value("${sc.core.port}")
+    private int serverPort;
 
     private Long robotID;
 
@@ -134,7 +139,7 @@ public class DataService {
                 navigationParser.list.remove(0);
             }
             RestTemplate rest = new RestTemplate();
-            rest.getForObject("http://" + serverIP + "/bot/" + robotID + "/lid/" + lid, Integer.class);
+            rest.getForObject("http://" + serverIP + ":" + serverPort + "/bot/" + robotID + "/lid/" + lid, Integer.class);
         }
     }
 
