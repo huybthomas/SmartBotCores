@@ -2,6 +2,7 @@ package be.uantwerpen.sc.controllers;
 
 import be.uantwerpen.sc.services.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.DataInputStream;
@@ -22,9 +23,15 @@ public class CStatusEventHandler implements Runnable
     Socket socket;
     DataInputStream dIn;
 
+    @Value("{$car.ccore.ip}")
+    private String coreIP;
+
+    @Value("{$car.ccore.eventport}")
+    private int coreEventPort;
+
     public CStatusEventHandler(){
         try{
-            socket = new Socket("146.175.140.190", 1314);
+            socket = new Socket(coreIP, coreEventPort);
             dIn = new DataInputStream(socket.getInputStream());
         }catch(Exception e){
             e.printStackTrace();

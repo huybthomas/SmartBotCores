@@ -1,6 +1,7 @@
 package be.uantwerpen.sc.controllers;
 
 import be.uantwerpen.sc.tools.Terminal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.DataInputStream;
@@ -14,32 +15,48 @@ import java.net.Socket;
 @Service
 public class CCommandSender
 {
-    Socket socket;
-    DataOutputStream dOut;
-    DataInputStream dIn;
+    private Socket socket;
+    private DataOutputStream dOut;
+    private DataInputStream dIn;
     private boolean serverActive;
 
-    public CCommandSender(){
-        try{
-            socket = new Socket("146.175.140.190", 1313);
+    @Value("{$car.ccore.ip}")
+    private String coreIP;
+
+    @Value("{$car.ccore.commandport}")
+    private int coreCommandPort;
+
+    public CCommandSender()
+    {
+        try
+        {
+            socket = new Socket(coreIP, coreCommandPort);
             socket.setSoTimeout(500);
             dOut = new DataOutputStream(socket.getOutputStream());
             dIn = new DataInputStream(socket.getInputStream());
             serverActive = true;
-        }catch(Exception e) {
+        }
+        catch(Exception e)
+        {
             e.printStackTrace();
             serverActive = false;
         }
     }
 
-    public CCommandSender(String ip){
-        try{
-            socket = new Socket(ip, 1313);
+    public CCommandSender(String ip)
+    {
+        try
+        {
+            socket = new Socket(ip, coreCommandPort);
             socket.setSoTimeout(500);
             dOut = new DataOutputStream(socket.getOutputStream());
             dIn = new DataInputStream(socket.getInputStream());
-        }catch(Exception e) {
+            serverActive = true;
+        }
+        catch(Exception e)
+        {
             e.printStackTrace();
+            serverActive = false;
         }
     }
 
@@ -94,7 +111,8 @@ public class CCommandSender
         }
     }
 
-    public boolean close(){
+    public boolean close()
+    {
         try{
             socket.close();
             return true;
@@ -102,7 +120,5 @@ public class CCommandSender
             e.printStackTrace();
             return false;
         }
-
-
     }
 }
