@@ -4,6 +4,7 @@ import be.uantwerpen.sc.tools.Terminal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -28,26 +29,16 @@ public class CCommandSender
 
     public CCommandSender()
     {
+
+    }
+
+    @PostConstruct
+    private void postConstruct()
+    {
+        //IP / port-values are initialised at the end of the constructor
         try
         {
             socket = new Socket(coreIP, coreCommandPort);
-            socket.setSoTimeout(500);
-            dOut = new DataOutputStream(socket.getOutputStream());
-            dIn = new DataInputStream(socket.getInputStream());
-            serverActive = true;
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            serverActive = false;
-        }
-    }
-
-    public CCommandSender(String ip)
-    {
-        try
-        {
-            socket = new Socket(ip, coreCommandPort);
             socket.setSoTimeout(500);
             dOut = new DataOutputStream(socket.getOutputStream());
             dIn = new DataInputStream(socket.getInputStream());

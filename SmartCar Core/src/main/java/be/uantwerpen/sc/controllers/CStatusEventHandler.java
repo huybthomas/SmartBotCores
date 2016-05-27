@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.DataInputStream;
 import java.net.Socket;
 
@@ -29,17 +30,29 @@ public class CStatusEventHandler implements Runnable
     @Value("#{new Integer(${car.ccore.eventport})}")
     private int coreEventPort;
 
-    public CStatusEventHandler(){
-        try{
+    public CStatusEventHandler()
+    {
+
+    }
+
+    @PostConstruct
+    private void postConstruct()
+    {
+        //IP / port-values are initialised at the end of the constructor
+        try
+        {
             socket = new Socket(coreIP, coreEventPort);
             dIn = new DataInputStream(socket.getInputStream());
-        }catch(Exception e){
+        }
+        catch(Exception e)
+        {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
         while(!Thread.currentThread().isInterrupted()){
             try {
                 byte[] bytes = readData();
