@@ -25,6 +25,12 @@ public class mqttLocationPublisher
     @Value("#{new Integer(${mqtt.port})}")
     private int mqttPort;
 
+    @Value("${mqtt.username}")
+    private String mqttUsername;
+
+    @Value("${mqtt.password}")
+    private String mqttPassword;
+
     public void publishLocation(Integer location)
     {
         String content      = location.toString();
@@ -32,18 +38,23 @@ public class mqttLocationPublisher
         String topic        = "BOT/" + dataService.getRobotID() + "/Location";
         String broker       = "tcp://" + mqttIP + ":" + mqttPort;
         String clientId = "-1";
-        if(dataService.getRobotID() != null) {
+
+        if(dataService.getRobotID() != null)
+        {
             clientId = dataService.getRobotID().toString();
         }
+
         MemoryPersistence persistence = new MemoryPersistence();
 
-        if(dataService.getRobotID() != null) {
-            try {
+        if(dataService.getRobotID() != null)
+        {
+            try
+            {
                 MqttClient client = new MqttClient(broker, clientId, persistence);
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setCleanSession(true);
-                connOpts.setUserName("arthur");
-                connOpts.setPassword("arthur".toCharArray());
+                connOpts.setUserName(mqttUsername);
+                connOpts.setPassword(mqttPassword.toCharArray());
                 //System.out.println("Connecting to broker: "+broker);
                 client.connect(connOpts);
                 //System.out.println("Connected");
@@ -53,7 +64,9 @@ public class mqttLocationPublisher
                 client.publish(topic, message);
                 //System.out.println("Message published");
                 client.disconnect();
-            } catch (MqttException me) {
+            }
+            catch (MqttException me)
+            {
                 System.out.println("reason " + me.getReasonCode());
                 System.out.println("msg " + me.getMessage());
                 System.out.println("loc " + me.getLocalizedMessage());
@@ -64,12 +77,17 @@ public class mqttLocationPublisher
         }
     }
 
-    public void close(){
-        try{
+    public void close()
+    {
+        try
+        {
 
-        }catch (Exception e){
+        }
+        catch(Exception e)
+        {
             e.printStackTrace();
         }
+
         System.out.println("Disconnected");
     }
 }

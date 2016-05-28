@@ -2,7 +2,6 @@ package be.uantwerpen.sc.configurations;
 
 import be.uantwerpen.sc.RobotCoreLoop;
 import be.uantwerpen.sc.controllers.*;
-import be.uantwerpen.sc.models.map.Path;
 import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.services.QueueService;
 import be.uantwerpen.sc.tools.PathplanningType;
