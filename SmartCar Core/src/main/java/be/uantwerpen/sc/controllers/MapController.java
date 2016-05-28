@@ -17,10 +17,10 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping(value = "/map/")
 public class MapController
 {
-    @Value("${sc.core.ip}")
+    @Value("${sc.core.ip : localhost}")
     private String serverIP;
 
-    @Value("#{new Integer(${sc.core.port})}")
+    @Value("#{new Integer(${sc.core.port}) ?: 1994}")
     private int serverPort;
 
     /*@RequestMapping(method = RequestMethod.GET)

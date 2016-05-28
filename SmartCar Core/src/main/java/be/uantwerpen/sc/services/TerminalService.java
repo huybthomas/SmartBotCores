@@ -2,17 +2,13 @@ package be.uantwerpen.sc.services;
 
 import be.uantwerpen.sc.RobotCoreLoop;
 import be.uantwerpen.sc.controllers.CCommandSender;
-import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.controllers.PathController;
 import be.uantwerpen.sc.models.map.Path;
 import be.uantwerpen.sc.tools.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * Created by Thomas on 14/04/2016.

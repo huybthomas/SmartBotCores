@@ -24,10 +24,10 @@ public class CStatusEventHandler implements Runnable
     Socket socket;
     DataInputStream dIn;
 
-    @Value("${car.ccore.ip}")
+    @Value("${car.ccore.ip : localhost}")
     private String coreIP;
 
-    @Value("#{new Integer(${car.ccore.eventport})}")
+    @Value("#{new Integer(${car.ccore.eventport}) ?: 1314}")
     private int coreEventPort;
 
     public CStatusEventHandler()

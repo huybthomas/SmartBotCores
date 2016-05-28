@@ -8,11 +8,13 @@ import java.util.concurrent.BlockingQueue;
  * Created by Niels on 4/05/2016.
  */
 @Service
-public class QueueService {
-
+public class QueueService
+{
     BlockingQueue<String> jobQueue = new ArrayBlockingQueue<>(100);
 
-    public QueueService() {
+    public QueueService()
+    {
+
     }
 
     public synchronized String getJob(){

@@ -21,10 +21,10 @@ public class CCommandSender
     private DataInputStream dIn;
     private boolean serverActive;
 
-    @Value("${car.ccore.ip}")
+    @Value("${car.ccore.ip : localhost}")
     private String coreIP;
 
-    @Value("#{new Integer(${car.ccore.taskport})}")
+    @Value("#{new Integer(${car.ccore.taskport}) ?: 1313}")
     private int coreCommandPort;
 
     public CCommandSender()

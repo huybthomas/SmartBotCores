@@ -24,11 +24,14 @@ public class JobListenerController
     private BlockingQueue<String> jobQueue;
 
     @RequestMapping(value = "/job/", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> jobListener(@RequestBody String job, UriComponentsBuilder ucBuilder){
-
-        if(job == null){
+    public @ResponseBody ResponseEntity<String> jobListener(@RequestBody String job, UriComponentsBuilder ucBuilder)
+    {
+        if(job == null)
+        {
             return new ResponseEntity("No Job",HttpStatus.NO_CONTENT);
-        }else{
+        }
+        else
+        {
             System.out.println("Job = " + job);
             cCommandSender.sendCommand(job);
             return new ResponseEntity("ok",HttpStatus.OK);
@@ -36,7 +39,8 @@ public class JobListenerController
     }
 
     @RequestMapping(value = "/checkjobs/", method = RequestMethod.GET)
-    public void chechQueue(){
+    public void checkQueue()
+    {
         jobQueue = queueService.getContentQueue();
         System.out.println(jobQueue.toString());
     }

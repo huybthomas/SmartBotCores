@@ -10,17 +10,24 @@ public class CLocationPoller implements Runnable
     @Autowired
     CCommandSender cCommandSender;
 
-    public CLocationPoller(CCommandSender cCommandSender){
+    public CLocationPoller(CCommandSender cCommandSender)
+    {
         this.cCommandSender = cCommandSender;
     }
 
-    public void run(){
-        while(!Thread.currentThread().isInterrupted()){
-            try{
+    public void run()
+    {
+        while(!Thread.currentThread().isInterrupted())
+        {
+            try
+            {
                 Thread.currentThread().sleep(250);
-            }catch (Exception e){
+            }
+            catch (Exception e)
+            {
                 e.printStackTrace();
             }
+
             cCommandSender.sendCommand("DRIVE DISTANCE");
         }
     }
