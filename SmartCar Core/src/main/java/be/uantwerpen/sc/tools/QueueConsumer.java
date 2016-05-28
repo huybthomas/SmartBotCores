@@ -6,7 +6,6 @@ import be.uantwerpen.sc.services.QueueService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
-import javax.swing.plaf.basic.BasicTreeUI;
 import java.util.concurrent.BlockingQueue;
 
 /**

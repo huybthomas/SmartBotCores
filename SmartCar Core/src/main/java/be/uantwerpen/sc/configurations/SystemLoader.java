@@ -8,6 +8,7 @@ import be.uantwerpen.sc.services.QueueService;
 import be.uantwerpen.sc.tools.PathplanningType;
 import be.uantwerpen.sc.tools.QueueConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -47,6 +48,12 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     @Autowired
     private mqttLocationPublisher locationPublisher;
 
+    @Value("${sc.core.ip}")
+    String serverIP;
+
+    @Value("#{new Integer(${sc.core.port})}")
+    int serverPort;
+
     private RobotCoreLoop robotCoreLoop;
 
     //Run after Spring context initialization
@@ -56,6 +63,9 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
 
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
         CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
+
+        //Temporary fix for new instantiated RobotCoreLoop class (no Spring handling)
+        robotCoreLoop.setServerCoreIP(serverIP, serverPort);
 
         new Thread(robotCoreLoop).start();
         new Thread(cStatusEventHandler).start();

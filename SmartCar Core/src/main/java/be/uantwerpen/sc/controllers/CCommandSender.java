@@ -24,7 +24,7 @@ public class CCommandSender
     @Value("${car.ccore.ip}")
     private String coreIP;
 
-    @Value("#{new Integer(${car.ccore.commandport})}")
+    @Value("#{new Integer(${car.ccore.taskport})}")
     private int coreCommandPort;
 
     public CCommandSender()

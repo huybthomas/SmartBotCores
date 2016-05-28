@@ -1,7 +1,5 @@
 package be.uantwerpen.sc;
 
-import be.uantwerpen.sc.controllers.CCommandSender;
-import be.uantwerpen.sc.controllers.CStatusEventHandler;
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.controllers.PathController;
 import be.uantwerpen.sc.services.*;
@@ -16,13 +14,7 @@ import org.springframework.web.client.RestTemplate;
 public class RobotCoreLoop implements Runnable
 {
     @Autowired
-    CStatusEventHandler cStatusEventHandler;
-
-    @Autowired
-    CCommandSender cCommandSender;
-
-    @Autowired
-    DataService dataService;
+    private DataService dataService;
 
     @Autowired
     private PathplanningType pathplanningType;
@@ -50,6 +42,13 @@ public class RobotCoreLoop implements Runnable
         //Setup type
         first = true;
         Terminal.printTerminalInfo("Selected PathplanningType: " + pathplanningType.getType().name());
+    }
+
+    @Deprecated
+    public void setServerCoreIP(String ip, int port)
+    {
+        this.serverIP = ip;
+        this.serverPort = port;
     }
 
     public void run() {
