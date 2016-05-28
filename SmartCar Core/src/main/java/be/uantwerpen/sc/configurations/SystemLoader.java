@@ -45,7 +45,7 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     private DataService dataService;
 
     @Autowired
-    private mqttLocationPublisher locationPublisher;
+    private MqttLocationPublisher locationPublisher;
 
     @Value("${sc.core.ip}")
     String serverIP;

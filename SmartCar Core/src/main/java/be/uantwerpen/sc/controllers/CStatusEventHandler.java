@@ -19,7 +19,7 @@ public class CStatusEventHandler implements Runnable
     DataService dataService;
 
     @Autowired
-    mqttLocationPublisher locationPublisher;
+    MqttLocationPublisher locationPublisher;
 
     Socket socket;
     DataInputStream dIn;
