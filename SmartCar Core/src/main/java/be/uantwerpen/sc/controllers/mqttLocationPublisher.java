@@ -19,16 +19,16 @@ public class mqttLocationPublisher
     @Autowired
     private DataService dataService;
 
-    @Value("${mqtt.ip : localhost}")
+    @Value("${mqtt.ip:localhost}")
     private String mqttIP;
 
     @Value("#{new Integer(${mqtt.port}) ?: 1883}")
     private int mqttPort;
 
-    @Value("${mqtt.username : default}")
+    @Value("${mqtt.username:default}")
     private String mqttUsername;
 
-    @Value("${mqtt.password : default}")
+    @Value("${mqtt.password:default}")
     private String mqttPassword;
 
     public void publishLocation(Integer location)

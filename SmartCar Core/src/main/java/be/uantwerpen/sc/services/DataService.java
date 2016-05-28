@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class DataService
 {
-    @Value("${sc.core.ip : localhost}")
+    @Value("${sc.core.ip:localhost}")
     private String serverIP;
 
     @Value("#{new Integer(${sc.core.port}) ?: 1994}")

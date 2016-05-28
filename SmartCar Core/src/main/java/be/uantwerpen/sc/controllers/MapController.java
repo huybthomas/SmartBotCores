@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping(value = "/map/")
 public class MapController
 {
-    @Value("${sc.core.ip : localhost}")
+    @Value("${sc.core.ip:localhost}")
     private String serverIP;
 
     @Value("#{new Integer(${sc.core.port}) ?: 1994}")
