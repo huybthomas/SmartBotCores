@@ -143,7 +143,7 @@ public class DataService
     }
 
     public void setCurrentLocationAccordingTag() {
-        switch(getTag().trim()){
+        switch(getTag()){
             case "04 70 39 32 06 27 80":
                 setCurrentLocation(1);
                 break;

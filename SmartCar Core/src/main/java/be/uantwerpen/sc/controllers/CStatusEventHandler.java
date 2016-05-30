@@ -57,7 +57,7 @@ public class CStatusEventHandler implements Runnable
             try {
                 byte[] bytes = readData();
                 String s = new String(bytes);
-                //System.out.println(s);
+
                 //TODO Continue this method
                 if (s.startsWith("DRIVE EVENT: FINISHED")){
                     synchronized (this){
@@ -88,13 +88,15 @@ public class CStatusEventHandler implements Runnable
                         locationPublisher.publishLocation(millis);
                     }
                 }if (s.startsWith("TAG DETECTION EVENT")){
-                    String tag = s.split(":", 2)[1];
+                    String tag = s.split(":", 2)[1].trim();
                     synchronized (this){
                         dataService.setTag(tag);
                         dataService.robotBusy = false;
                         dataService.setCurrentLocationAccordingTag();
-                        if(!tag.trim().equals("NONE")){
-                            dataService.locationUpdated = true;}
+                        if(!tag.trim().equals("NONE"))
+                        {
+                            dataService.locationUpdated = true;
+                        }
                     }
                 }if (s.startsWith("TRAFFIC_LIGHT")){
                     String trafficlightStatus = s.split(" ", 2)[1];

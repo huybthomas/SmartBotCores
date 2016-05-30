@@ -37,7 +37,7 @@ public class MqttLocationPublisher
         int qos             = 2;
         String topic        = "BOT/" + dataService.getRobotID() + "/Location";
         String broker       = "tcp://" + mqttIP + ":" + mqttPort;
-        String clientId = "-1";
+        String clientId     = "-1";
 
         if(dataService.getRobotID() != null)
         {

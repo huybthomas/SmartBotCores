@@ -17,10 +17,10 @@ public class QueueConsumer implements Runnable
     private QueueService queueService;
     private DataService dataService;
 
-    @Value("${sc.core.ip}")
+    @Value("${sc.core.ip:localhost}")
     private String serverIP;
 
-    @Value("${sc.core.port}")
+    @Value("#{new Integer(${sc.core.port}) ?: 1994}")
     private int serverPort;
 
     private boolean first = true;
