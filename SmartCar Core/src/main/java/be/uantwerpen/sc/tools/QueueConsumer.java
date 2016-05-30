@@ -65,6 +65,7 @@ public class QueueConsumer implements Runnable
                             Terminal.printTerminal("Lock Requested");
                             while (!response) {
                                 response = rest.getForObject("http://" + serverIP + ":" + serverPort + "/point/requestlock/" + dataService.getNextNode(), boolean.class);
+
                                 if (!response) {
                                     //Terminal.printTerminal("Lock Denied: " + dataService.getNextNode());
                                     Thread.sleep(200);
@@ -100,7 +101,8 @@ public class QueueConsumer implements Runnable
 
                             //Unlock point
                             RestTemplate rest = new RestTemplate();
-                            rest.getForObject("http://" + serverIP + ":" + serverPort + "/point/setlock/" + dataService.getPrevNode() + "/0", Integer.class);
+
+                            rest.getForObject("http://" + serverIP + ":" + serverPort + "/point/setlock/" + dataService.getPrevNode() + "/0", Boolean.class);
                         }
                     }
                 }
