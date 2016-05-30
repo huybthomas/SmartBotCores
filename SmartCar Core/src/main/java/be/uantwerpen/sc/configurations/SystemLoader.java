@@ -63,8 +63,9 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
         CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
 
-        //Temporary fix for new instantiated RobotCoreLoop class (no Spring handling)
+        //Temporary fix for new instantiated RobotCoreLoop / QueueConsumer class (no Spring handling)
         robotCoreLoop.setServerCoreIP(serverIP, serverPort);
+        queueConsumer.setServerCoreIP(serverIP, serverPort);
 
         new Thread(robotCoreLoop).start();
         new Thread(cStatusEventHandler).start();

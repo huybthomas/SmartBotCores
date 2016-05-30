@@ -27,11 +27,18 @@ public class QueueConsumer implements Runnable
 
     private BlockingQueue<String> jobQueue;
 
-    public  QueueConsumer(QueueService queueService, CCommandSender sender, DataService dataService)
+    public QueueConsumer(QueueService queueService, CCommandSender sender, DataService dataService)
     {
         this.queueService = queueService;
         this.sender = sender;
         this.dataService = dataService;
+    }
+
+    @Deprecated
+    public void setServerCoreIP(String ip, int port)
+    {
+        this.serverIP = ip;
+        this.serverPort = port;
     }
 
     @Override
