@@ -1,6 +1,7 @@
 package be.uantwerpen.sc.controllers;
 
 import be.uantwerpen.sc.services.DataService;
+import be.uantwerpen.sc.tools.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -83,7 +84,7 @@ public class CStatusEventHandler implements Runnable
                     String millisString = s.split(":", 2)[1].trim();
                     int millis = Integer.parseInt(millisString);
                     synchronized (this) {
-                        //Terminal.printTerminal("Distance: " + millis);
+                        Terminal.printTerminal("Distance: " + millis);
                         dataService.setMillis(millis);
                         locationPublisher.publishLocation(millis);
                     }

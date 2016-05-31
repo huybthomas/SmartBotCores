@@ -126,6 +126,7 @@ public class DataService
                     lid = link.getLid();
                     nextNode = link.getStopId().getPid();
                     prevNode = link.getStartId().getPid();
+                    linkMillis = link.getLength();
                 }
             }
 
