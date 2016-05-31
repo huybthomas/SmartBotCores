@@ -91,7 +91,6 @@ public class QueueConsumer implements Runnable
                     if(!dataService.robotBusy) {
                         Terminal.printTerminal(queueService.getContentQueue().toString());
                         String s = queueService.getJob();
-                        //push pls
                         Terminal.printTerminal("Sending: " + s);
                         sender.sendCommand(s);
 
