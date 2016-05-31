@@ -81,6 +81,10 @@ public class RobotCoreLoop implements Runnable
         setupInterface();
 
         dataService.map = mapController.getMap();
+
+        //We have the map now, update link
+        dataService.firstLink();
+
         dataService.setLookingCoordiante("N");
         while (!Thread.interrupted() && pathplanningType.getType() == PathplanningEnum.RANDOM) {
             //Use pathplanning (Described in Interface)

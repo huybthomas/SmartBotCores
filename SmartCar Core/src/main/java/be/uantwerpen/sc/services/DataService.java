@@ -1,6 +1,8 @@
 package be.uantwerpen.sc.services;
 
+import be.uantwerpen.sc.models.LinkEntity;
 import be.uantwerpen.sc.models.map.Map;
+import be.uantwerpen.sc.models.map.Node;
 import be.uantwerpen.sc.tools.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -112,6 +114,25 @@ public class DataService
 
     public void setPathplanningEnum(PathplanningEnum pathplanningEnum) {
         this.pathplanningEnum = pathplanningEnum;
+    }
+
+    public void firstLink(){
+        if(map != null && navigationParser != null) {
+            int start = getCurrentLocation();
+            int lid = -1;
+            for(Node node : map.getNodeList()){
+                if(node.getNodeId() == start){
+                    LinkEntity link = node.getNeighbours().get(0);
+                    lid = link.getLid();
+                    nextNode = link.getStopId().getPid();
+                    prevNode = link.getStartId().getPid();
+                }
+            }
+
+            Terminal.printTerminal("Current Link: " + lid);
+            RestTemplate rest = new RestTemplate();
+            rest.getForObject("http://" + serverIP + ":" + serverPort + "/bot/" + robotID + "/lid/" + lid, Integer.class);
+        }
     }
 
     public void nextLink(){
