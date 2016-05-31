@@ -117,7 +117,7 @@ public class DataService
     }
 
     public void firstLink(){
-        if(map != null && navigationParser != null) {
+        if(map != null) {
             int start = getCurrentLocation();
             int lid = -1;
             for(Node node : map.getNodeList()){
