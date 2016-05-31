@@ -24,6 +24,7 @@ public class QueueConsumer implements Runnable
     private int serverPort;
 
     private boolean lockGranted = false;
+    private boolean first = true;
 
     private BlockingQueue<String> jobQueue;
 
@@ -46,19 +47,17 @@ public class QueueConsumer implements Runnable
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 //System.out.println("Consumer wants to consume");
-                Thread.sleep(10);
-                if(queueService.getContentQueue().size() == 0){
-                    //System.out.println("queue is empty");
-                }else{
-                    //Terminal.printTerminal("PrevNode: " + dataService.getPrevNode());
-                    if(!lockGranted) {
-                        //System.out.println(queueService.getContentQueue().toString());
-                        //check if robot has to wait before point
-                        //Terminal.printTerminal("Distance: " + dataService.getMillis() + "\nStopDistance: " + (dataService.getLinkMillis() - 150));
-                        //Terminal.printTerminal("Permission:" + dataService.hasPermission());
-                        if (dataService.getMillis() > dataService.getLinkMillis() - 150 && !(dataService.hasPermission() == dataService.getNextNode())) {
+                Thread.sleep(100);
+
+                if(dataService.getNextNode() != -1) {
+                    if (!lockGranted) {
+                        //Robot already has permission?
+                        if (!(dataService.hasPermission() == dataService.getNextNode())) {
+                            //Terminal.printTerminal("Millis: " + dataService.getMillis() + " ,linkMillis: " + (dataService.getLinkMillis() - 150));
+                            if (dataService.getMillis() > dataService.getLinkMillis() - 150) {
                                 //Pause robot
                                 sender.sendCommand("DRIVE PAUSE");
+                                Terminal.printTerminal("PAUSED");
                                 //Ask for permission
                                 RestTemplate rest = new RestTemplate();
                                 boolean response = false;
@@ -74,34 +73,52 @@ public class QueueConsumer implements Runnable
                                 //response true -> Lock granted
                                 Terminal.printTerminal("Lock Granted: " + dataService.getNextNode());
                                 lockGranted = true;
-                                Terminal.printTerminalInfo("Permission: " + dataService.hasPermission() + " ,NextNode: " + dataService.getNextNode());
                                 dataService.setPermission(dataService.getNextNode());
-                            sender.sendCommand("DRIVE RESUME");
+                                Terminal.printTerminal("Permission: " + dataService.hasPermission() + " ,NextNode: " + dataService.getNextNode());
+                                sender.sendCommand("DRIVE RESUME");
+                                Terminal.printTerminal("RESUMED");
+                            }
+                        } else {
+                            lockGranted = true;
                         }
                     }
+                }
 
+                if(queueService.getContentQueue().size() == 0){
+                    //System.out.println("queue is empty");
+                }else{
                     //If robot not busy
                     if(!dataService.robotBusy) {
+                        Terminal.printTerminal(queueService.getContentQueue().toString());
                         String s = queueService.getJob();
+                        Terminal.printTerminal("Sending: " + s);
                         sender.sendCommand(s);
 
                         if(!s.contains("DRIVE DISTANCE")) {
                             dataService.robotBusy = true;
+                            dataService.setLocationVerified(false);
                         }
                         if(s.contains("DRIVE FOLLOWLINE")){
                             //Next Link
-                            dataService.nextLink();
+                            if(first) {
+                                first = false;
+                                Terminal.printTerminal("Setting up");
+                            }else{
+                                dataService.nextLink();
+                            }
+
+                            //TODO when sending manual commands calling getNextNode will crash the program
                             //When changing link reset permission
                             if(dataService.hasPermission() == dataService.getNextNode()){
                                 //Leave permission
                             }else {
                                 dataService.setPermission(-1);
+                                Terminal.printTerminal("Permission reset");
                                 lockGranted = false;
                             }
 
                             //Unlock point
                             RestTemplate rest = new RestTemplate();
-
                             rest.getForObject("http://" + serverIP + ":" + serverPort + "/point/setlock/" + dataService.getPrevNode() + "/0", Boolean.class);
                         }
                     }

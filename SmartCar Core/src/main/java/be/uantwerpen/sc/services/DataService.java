@@ -35,6 +35,16 @@ public class DataService
 
     private int nextNode = -1;
 
+    public boolean isLocationVerified() {
+        return locationVerified;
+    }
+
+    public void setLocationVerified(boolean locationVerifier) {
+        this.locationVerified = locationVerifier;
+    }
+
+    boolean locationVerified = false;
+
     public int getPrevNode() {
         return prevNode;
     }
@@ -56,6 +66,7 @@ public class DataService
     private int hasPermission = -1;
 
     public boolean robotBusy = false;
+
     public boolean locationUpdated = true;
 
     public String trafficLightStatus;
@@ -126,6 +137,7 @@ public class DataService
                     lid = link.getLid();
                     nextNode = link.getStopId().getPid();
                     prevNode = link.getStartId().getPid();
+                    linkMillis = link.getLength();
                 }
             }
 
@@ -139,7 +151,9 @@ public class DataService
         if(map != null && navigationParser != null) {
             int start = navigationParser.list.get(0).getId();
             int end = navigationParser.list.get(1).getId();
-            if(getTag().trim().equals("NONE")){currentLocation = nextNode;}
+            if(getTag().trim().equals("NONE")){
+                currentLocation = nextNode;
+            }
             //setCurrentLocationAccordingTag();
             nextNode = end;
             prevNode = start;
