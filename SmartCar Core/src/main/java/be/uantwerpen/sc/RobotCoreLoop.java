@@ -31,7 +31,7 @@ public class RobotCoreLoop implements Runnable
 
     public IPathplanning pathplanning;
 
-    private boolean first;
+    private boolean first = true;
 
     public RobotCoreLoop(QueueService queueService, MapController mapController, PathController pathController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;
@@ -40,7 +40,6 @@ public class RobotCoreLoop implements Runnable
         this.pathplanningType = pathplanningType;
         this.dataService = dataService;
         //Setup type
-        first = true;
         Terminal.printTerminalInfo("Selected PathplanningType: " + pathplanningType.getType().name());
     }
 
@@ -89,14 +88,9 @@ public class RobotCoreLoop implements Runnable
         while (!Thread.interrupted() && pathplanningType.getType() == PathplanningEnum.RANDOM) {
             //Use pathplanning (Described in Interface)
             if (queueService.getContentQueue().isEmpty() && dataService.locationUpdated) {
-                queueService.insertJob("TAG READ UID");
-                try {
-                    Thread.sleep(200);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 dataService.setCurrentLocationAccordingTag();
-                dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), 12));
+                //Endpoint wont be used -> does not matter
+                dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), -1));
                 //Parse Map
                 //dataService.navigationParser.parseMap();
                 dataService.navigationParser.parseRandomMap(dataService);
@@ -108,17 +102,26 @@ public class RobotCoreLoop implements Runnable
                 dataService.setPrevNode(start);
                 if (first) {
                     queueService.insertJob("DRIVE FOLLOWLINE");
-                    queueService.insertJob("DRIVE FORWARD 50");
+                    //queueService.insertJob("DRIVE FORWARD 50");
                     first = false;
                 }
                 //Process map
                 for (DriveDir command : dataService.navigationParser.commands) {
+                    Terminal.printTerminal("Adding command: " + command.toString());
                     queueService.insertJob(command.toString());
                 }
                 queueService.insertJob("TAG READ UID");
                 dataService.locationUpdated = false;
             }else if(queueService.getContentQueue().isEmpty()){
-                queueService.insertJob("TAG READ UID");
+                try {
+                    queueService.insertJob("TAG READ UID");
+                    if(!dataService.locationUpdated) {
+                        queueService.insertJob("DRIVE BACKWARDS 20");
+                    }
+                    Thread.sleep(200);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
             try {
                 Thread.sleep(200);
