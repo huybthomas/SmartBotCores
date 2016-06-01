@@ -108,25 +108,27 @@ public class TerminalService
             case "sendcommand":
                 try {
                     String command2 = commandString.split(" ", 2)[1].toUpperCase();
-                    sender.sendCommand(command2);
+                    //No override
+                    queueService.insertJob(command2);
+                    //Override
+                    //sender.sendCommand(command2);
                 }catch(ArrayIndexOutOfBoundsException e){
                     terminal.printTerminal("Usage: navigate start end");
                 }
                 break;
             case "domusic":
-                try {
-                    //sender.sendCommand("DRIVE FOLLOWLINE");
-                    sender.sendCommand("SPEAKER UNMUTE");
-                    sender.sendCommand("SPEAKER PLAY QMusic");
-                    try{
-                        Thread.sleep(1000);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    sender.sendCommand("SPEAKER PLAY cantina");
-                }catch(ArrayIndexOutOfBoundsException e){
-                    terminal.printTerminal("Usage: navigate start end");
+                //sender.sendCommand("DRIVE FOLLOWLINE");
+                sender.sendCommand("SPEAKER UNMUTE");
+                sender.sendCommand("SPEAKER PLAY QMusic");
+                try{
+                    Thread.sleep(1000);
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+                sender.sendCommand("SPEAKER PLAY cantina");
+                break;
+            case "stopmusic":
+                sender.sendCommand("SPEAKER STOP");
                 break;
             case "checkqueue":
                 try {

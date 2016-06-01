@@ -1,6 +1,5 @@
 package be.uantwerpen.sc.tools;
 
-import be.uantwerpen.sc.models.map.Map;
 import be.uantwerpen.sc.services.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 

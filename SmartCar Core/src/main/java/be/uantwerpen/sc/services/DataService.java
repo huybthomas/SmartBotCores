@@ -148,7 +148,7 @@ public class DataService
     }
 
     public void nextLink(){
-        if(map != null && navigationParser != null) {
+        if(map != null && navigationParser != null && navigationParser.list != null && !navigationParser.list.isEmpty() && navigationParser.list.size() != 1) {
             int start = navigationParser.list.get(0).getId();
             int end = navigationParser.list.get(1).getId();
             if(getTag().trim().equals("NONE")){
@@ -174,6 +174,10 @@ public class DataService
             }
             RestTemplate rest = new RestTemplate();
             rest.getForObject("http://" + serverIP + ":" + serverPort + "/bot/" + robotID + "/lid/" + lid, Integer.class);
+        }else{
+            //TODO update location
+            Terminal.printTerminal("Entering manual manouvering mode. Location will be inacurate");
+            prevNode = nextNode;
         }
     }
 
