@@ -1,5 +1,6 @@
 package be.uantwerpen.sc.controllers;
 
+import be.uantwerpen.sc.controllers.mqtt.MqttLocationPublisher;
 import be.uantwerpen.sc.services.DataService;
 import be.uantwerpen.sc.tools.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
