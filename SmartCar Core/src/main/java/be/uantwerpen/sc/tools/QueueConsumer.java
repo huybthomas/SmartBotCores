@@ -54,7 +54,7 @@ public class QueueConsumer implements Runnable
                         //Robot already has permission?
                         if (!(dataService.hasPermission() == dataService.getNextNode())) {
                             //Terminal.printTerminal("Millis: " + dataService.getMillis() + " ,linkMillis: " + (dataService.getLinkMillis() - 150));
-                            if (dataService.getMillis() > dataService.getLinkMillis() - 150) {
+                            if (dataService.getMillis() > dataService.getLinkMillis() - 200) {
                                 //Pause robot
                                 sender.sendCommand("DRIVE PAUSE");
                                 Terminal.printTerminal("PAUSED");

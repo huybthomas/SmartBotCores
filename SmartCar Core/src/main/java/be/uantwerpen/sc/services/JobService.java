@@ -78,10 +78,10 @@ public class JobService
                         startPathPlanning(endInt);
                     } catch (NumberFormatException e) {
                         Terminal.printTerminalError(e.getMessage());
-                        Terminal.printTerminalInfo("Usage: navigate start end");
+                        Terminal.printTerminalInfo("Usage: navigate end");
                     }
                 }catch(ArrayIndexOutOfBoundsException e){
-                    Terminal.printTerminalInfo("Usage: navigate start end");
+                    Terminal.printTerminalInfo("Usage: navigate end");
                 }
                 break;
             case "playaudio":
@@ -99,16 +99,18 @@ public class JobService
         }
     }
 
-    private void startPathPlanning(int end){
-        Terminal.printTerminal("Starting pathplanning from point " + dataService.getCurrentLocation() + " to " + end);
-        dataService.navigationParser = new NavigationParser(robotCoreLoop.pathplanning.Calculatepath(dataService.map,dataService.getCurrentLocation(), end));
+    private void startPathPlanning(int end2){
+        Terminal.printTerminal("Starting pathplanning from point " + dataService.getCurrentLocation() + " to " + end2);
+        dataService.navigationParser = new NavigationParser(robotCoreLoop.pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), end2));
         //Parse Map
-        //dataService.navigationParser.parseMap();
-        dataService.navigationParser.parseRandomMap(dataService);
+        dataService.navigationParser.parseMap();
+        //dataService.navigationParser.parseRandomMap(dataService);
 
         //Setup for driving
-        dataService.setNextNode(dataService.navigationParser.list.get(1).getId());
-        dataService.setPrevNode(dataService.navigationParser.list.get(0).getId());
+        int start = dataService.navigationParser.list.get(0).getId();
+        int end = dataService.navigationParser.list.get(1).getId();
+        dataService.setNextNode(end);
+        dataService.setPrevNode(start);
         queueService.insertJob("DRIVE FOLLOWLINE");
         queueService.insertJob("DRIVE FORWARD 50");
 

@@ -1,6 +1,8 @@
 package be.uantwerpen.sc.controllers.mqtt;
 
 import be.uantwerpen.sc.services.DataService;
+import be.uantwerpen.sc.services.JobService;
+import be.uantwerpen.sc.tools.Terminal;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -18,6 +20,9 @@ public class MqttJobSubscriber
 {
     @Autowired
     private DataService dataService;
+
+    @Autowired
+    private JobService jobService;
 
     @Value("${mqtt.ip:localhost}")
     private String mqttIP;
@@ -50,6 +55,7 @@ public class MqttJobSubscriber
 
         if(dataService.getRobotID() != null)
         {
+            Terminal.printTerminal("RobotID: " + dataService.getRobotID().toString());
             clientId = dataService.getRobotID().toString();
         }
         else
@@ -78,7 +84,7 @@ public class MqttJobSubscriber
     {
         try
         {
-            mqttSubscribeClient.setCallback(new MqttJobSubscriberCallback(this));
+            mqttSubscribeClient.setCallback(new MqttJobSubscriberCallback(this, jobService));
             MqttConnectOptions connectOptions = new MqttConnectOptions();
             connectOptions.setCleanSession(true);
             connectOptions.setUserName(mqttUsername);
@@ -86,7 +92,7 @@ public class MqttJobSubscriber
             mqttSubscribeClient.connect(connectOptions);
 
             //Subscribe to all subtopics of bots
-            mqttSubscribeClient.subscribe("BOT/" + dataService.getRobotID() + "/JOB");
+            mqttSubscribeClient.subscribe("BOT/" + dataService.getRobotID() + "/Job");
         }
         catch(MqttException e)
         {
