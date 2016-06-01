@@ -1,4 +1,4 @@
-package be.uantwerpen.sc.controllers;
+package be.uantwerpen.sc.controllers.mqtt;
 
 import be.uantwerpen.sc.services.DataService;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -50,7 +50,7 @@ public class MqttLocationPublisher
         {
             try
             {
-                MqttClient client = new MqttClient(broker, clientId, persistence);
+                MqttClient client = new MqttClient(broker, clientId + "_publisher", persistence);
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setCleanSession(true);
                 connOpts.setUserName(mqttUsername);
@@ -65,13 +65,14 @@ public class MqttLocationPublisher
                 //System.out.println("Message published");
                 client.disconnect();
             }
-            catch (MqttException me)
+            catch(MqttException me)
             {
-                System.out.println("reason " + me.getReasonCode());
-                System.out.println("msg " + me.getMessage());
-                System.out.println("loc " + me.getLocalizedMessage());
-                System.out.println("cause " + me.getCause());
-                System.out.println("excep " + me);
+                System.err.println("Could not publish topic: " + topic + " to mqtt service!");
+                System.err.println("reason " + me.getReasonCode());
+                System.err.println("msg " + me.getMessage());
+                System.err.println("loc " + me.getLocalizedMessage());
+                System.err.println("cause " + me.getCause());
+                System.err.println("excep " + me);
                 me.printStackTrace();
             }
         }

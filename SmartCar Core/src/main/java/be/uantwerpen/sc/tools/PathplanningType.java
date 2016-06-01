@@ -31,7 +31,7 @@ public class PathplanningType {
                     break;
                 default:
                     //run default
-                    type = PathplanningEnum.DIJKSTRA;
+                    type = PathplanningEnum.TERMINAL;
             }
         }
     }

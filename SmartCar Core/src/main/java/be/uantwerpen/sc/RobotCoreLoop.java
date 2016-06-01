@@ -2,6 +2,7 @@ package be.uantwerpen.sc;
 
 import be.uantwerpen.sc.controllers.MapController;
 import be.uantwerpen.sc.controllers.PathController;
+import be.uantwerpen.sc.controllers.mqtt.MqttJobSubscriber;
 import be.uantwerpen.sc.services.*;
 import be.uantwerpen.sc.tools.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,12 @@ public class RobotCoreLoop implements Runnable
 
     @Autowired
     private PathplanningType pathplanningType;
+
+    @Autowired
+    private MqttJobSubscriber jobSubscriber;
+
+    @Autowired
+    private JobService jobService;
 
     @Value("${sc.core.ip:localhost}")
     private String serverIP;
@@ -55,6 +62,12 @@ public class RobotCoreLoop implements Runnable
         RestTemplate restTemplate = new RestTemplate();
         Long robotID = restTemplate.getForObject("http://" + serverIP + ":" + serverPort + "/bot/newRobot", Long.class);
         dataService.setRobotID(robotID);
+        jobService.setRobotCoreLoop(this);
+
+        if(!jobSubscriber.initialisation())
+        {
+            System.err.println("Could not initialise MQTT Job service!");
+        }
 
         Terminal.printTerminal("Got ID: " + robotID);
 
@@ -149,6 +162,11 @@ public class RobotCoreLoop implements Runnable
                 queueService.insertJob(command.toString());
             }
         }
+    }
+
+    public IPathplanning getPathplanning()
+    {
+        return this.pathplanning;
     }
 
 

@@ -68,10 +68,10 @@ public class TerminalService
                         startPathPlanning(endInt);
                     } catch (NumberFormatException e) {
                         terminal.printTerminalError(e.getMessage());
-                        terminal.printTerminal("Usage: navigate start end");
+                        terminal.printTerminalInfo("Usage: navigate start end");
                     }
                 }catch(ArrayIndexOutOfBoundsException e){
-                    terminal.printTerminal("Usage: navigate start end");
+                    terminal.printTerminalInfo("Usage: navigate start end");
                 }
                 break;
             case "path":
@@ -81,9 +81,9 @@ public class TerminalService
                     String start = command2.split(" ", 2)[0].toLowerCase();
                     String end = command2.split(" ", 2)[1].toLowerCase();
                     if (start == end) {
-                        terminal.printTerminal("Start cannot equal end.");
+                        terminal.printTerminalInfo("Start cannot equal end.");
                     } else if (start == "" || end == "") {
-                        terminal.printTerminal("Usage: navigate start end");
+                        terminal.printTerminalInfo("Usage: navigate start end");
                     } else {
                         try {
                             int startInt = Integer.parseInt(start);
@@ -91,18 +91,18 @@ public class TerminalService
                             getPath(startInt, endInt);
                         } catch (NumberFormatException e) {
                             terminal.printTerminalError(e.getMessage());
-                            terminal.printTerminal("Usage: navigate start end");
+                            terminal.printTerminalInfo("Usage: navigate start end");
                         }
                     }
                 }catch(ArrayIndexOutOfBoundsException e){
-                    terminal.printTerminal("Usage: navigate start end");
+                    terminal.printTerminalError("Usage: navigate start end");
                 }
                 break;
             case "random":
                 try {
                     getRandomPath();
                 }catch(ArrayIndexOutOfBoundsException e){
-                    terminal.printTerminal("Usage: navigate start end");
+                    terminal.printTerminalError("Usage: navigate start end");
                 }
                 break;
             case "sendcommand":
@@ -113,11 +113,10 @@ public class TerminalService
                     //Override
                     //sender.sendCommand(command2);
                 }catch(ArrayIndexOutOfBoundsException e){
-                    terminal.printTerminal("Usage: navigate start end");
+                    terminal.printTerminalInfo("Usage: navigate start end");
                 }
                 break;
             case "domusic":
-                //sender.sendCommand("DRIVE FOLLOWLINE");
                 sender.sendCommand("SPEAKER UNMUTE");
                 sender.sendCommand("SPEAKER PLAY QMusic");
                 try{
@@ -134,7 +133,7 @@ public class TerminalService
                 try {
                     System.out.println(queueService.getContentQueue().toString());
                 }catch(ArrayIndexOutOfBoundsException e){
-                    terminal.printTerminal("error");
+                    terminal.printTerminalError("error");
                 }
                 break;
             case "exit":
