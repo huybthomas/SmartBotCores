@@ -54,12 +54,13 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     @Value("#{new Integer(${sc.core.port})}")
     int serverPort;
 
+    @Autowired
     private RobotCoreLoop robotCoreLoop;
 
     //Run after Spring context initialization
     public void onApplicationEvent(ContextRefreshedEvent event)
     {
-        robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathController, pathplanningType, dataService);
+        //robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathController, pathplanningType, dataService);
 
         QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
         CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);

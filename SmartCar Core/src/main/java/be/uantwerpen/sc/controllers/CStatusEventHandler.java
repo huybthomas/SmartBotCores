@@ -94,7 +94,7 @@ public class CStatusEventHandler implements Runnable
                             }
                         }else{
                             synchronized (this) {
-                                Terminal.printTerminal("Distance: " + millis);
+                                //Terminal.printTerminal("Distance: " + millis);
                                 dataService.setMillis(millis);
                                 locationPublisher.publishLocation(millis);
                             }

@@ -7,11 +7,15 @@ import be.uantwerpen.sc.services.*;
 import be.uantwerpen.sc.tools.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Created by Arthur on 4/05/2016.
  */
+@Service
 public class RobotCoreLoop implements Runnable
 {
     @Autowired
@@ -32,20 +36,32 @@ public class RobotCoreLoop implements Runnable
     @Value("#{new Integer(${sc.core.port}) ?: 1994}")
     private int serverPort;
 
+    @Autowired
     private QueueService queueService;
+    @Autowired
     private MapController mapController;
+    @Autowired
     private PathController pathController;
 
     public IPathplanning pathplanning;
 
     private boolean first = true;
 
-    public RobotCoreLoop(QueueService queueService, MapController mapController, PathController pathController, PathplanningType pathplanningType, DataService dataService){
+    /*public RobotCoreLoop(QueueService queueService, MapController mapController, PathController pathController, PathplanningType pathplanningType, DataService dataService){
         this.queueService = queueService;
         this.mapController = mapController;
         this.pathController = pathController;
         this.pathplanningType = pathplanningType;
         this.dataService = dataService;
+
+    }*/
+
+    public RobotCoreLoop(){
+
+    }
+
+    @PostConstruct
+    private void postconstruct(){
         //Setup type
         Terminal.printTerminalInfo("Selected PathplanningType: " + pathplanningType.getType().name());
     }
@@ -183,6 +199,7 @@ public class RobotCoreLoop implements Runnable
             default:
                 //Dijkstra
                 pathplanning = new PathplanningService();
+                dataService.setPathplanningEnum(PathplanningEnum.DIJKSTRA);
         }
     }
 
