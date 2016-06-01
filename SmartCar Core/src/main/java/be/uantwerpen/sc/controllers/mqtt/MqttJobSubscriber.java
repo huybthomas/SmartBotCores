@@ -60,7 +60,7 @@ public class MqttJobSubscriber
 
         try
         {
-            mqttSubscribeClient = new MqttClient(brokerURL, clientId);
+            mqttSubscribeClient = new MqttClient(brokerURL, clientId + "_subscriber");
             start();
         }
         catch(MqttException e)

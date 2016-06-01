@@ -50,7 +50,7 @@ public class MqttLocationPublisher
         {
             try
             {
-                MqttClient client = new MqttClient(broker, clientId, persistence);
+                MqttClient client = new MqttClient(broker, clientId + "_publisher", persistence);
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setCleanSession(true);
                 connOpts.setUserName(mqttUsername);
