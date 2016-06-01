@@ -156,6 +156,17 @@ public class RobotCoreLoop implements Runnable
         }
 
         if (pathplanningType.getType() == PathplanningEnum.DIJKSTRA) {
+            dataService.locationUpdated = false;
+            while(!dataService.locationUpdated){
+                //Wait
+                try {
+                    //Read tag
+                    queueService.insertJob("TAG READ UID");
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             dataService.navigationParser = new NavigationParser(pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), 12));
             //Parse Map
             dataService.navigationParser.parseMap();
@@ -167,7 +178,7 @@ public class RobotCoreLoop implements Runnable
             dataService.setNextNode(end);
             dataService.setPrevNode(start);
             queueService.insertJob("DRIVE FOLLOWLINE");
-            queueService.insertJob("DRIVE FORWARD 50");
+            queueService.insertJob("DRIVE FORWARD 110");
 
             //Process map
             for (DriveDir command : dataService.navigationParser.commands) {
