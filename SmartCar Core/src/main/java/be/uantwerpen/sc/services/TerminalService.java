@@ -173,6 +173,17 @@ public class TerminalService
     }
 
     private void startPathPlanning(int end2){
+        dataService.locationUpdated = false;
+        while(!dataService.locationUpdated){
+            //Wait
+            try {
+                //Read tag
+                queueService.insertJob("TAG READ UID");
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         Terminal.printTerminal("Starting pathplanning from point " + dataService.getCurrentLocation() + " to " + end2);
         dataService.navigationParser = new NavigationParser(robotCoreLoop.pathplanning.Calculatepath(dataService.map, dataService.getCurrentLocation(), end2));
         //Parse Map
@@ -185,7 +196,7 @@ public class TerminalService
         dataService.setNextNode(end);
         dataService.setPrevNode(start);
         queueService.insertJob("DRIVE FOLLOWLINE");
-        queueService.insertJob("DRIVE FORWARD 50");
+        queueService.insertJob("DRIVE FORWARD 110");
 
         //Process map
         for (DriveDir command : dataService.navigationParser.commands) {
