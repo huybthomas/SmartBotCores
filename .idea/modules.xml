@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SmartCar Core/SmartCar Core.iml" filepath="$PROJECT_DIR$/SmartCar Core/SmartCar Core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../SmartCityProject/SmartCity Common/SmartCity Common.iml" filepath="$PROJECT_DIR$/../SmartCityProject/SmartCity Common/SmartCity Common.iml" />
     </modules>
   </component>
 </project>

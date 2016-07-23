@@ -43,8 +43,9 @@ public class TerminalService
 
     public void systemReady()
     {
-        terminal.printTerminal(" :: SmartCar Core - 2016 ::  -  Developed by: Huybrechts T., Janssens A., Vervliet N.");
+        terminal.printTerminal("\nSmartCar Core [Version " + getClass().getPackage().getImplementationVersion() + "]\n(c) 2015-2017 University of Antwerp. All rights reserved.");
         terminal.printTerminal("Type 'help' to display the possible commands.");
+
         terminal.activateTerminal();
     }
 

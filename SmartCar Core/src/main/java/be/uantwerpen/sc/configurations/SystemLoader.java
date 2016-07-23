@@ -9,9 +9,9 @@ import be.uantwerpen.sc.tools.PathplanningType;
 import be.uantwerpen.sc.tools.QueueConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationListener;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextRefreshedEvent;
 
 import be.uantwerpen.sc.services.TerminalService;
 
@@ -19,7 +19,7 @@ import be.uantwerpen.sc.services.TerminalService;
  * Created by Thomas on 14/04/2016.
  */
 @Configuration
-public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
+public class SystemLoader implements ApplicationRunner
 {
     @Autowired
     private TerminalService terminalService;
@@ -58,23 +58,41 @@ public class SystemLoader implements ApplicationListener<ContextRefreshedEvent>
     private RobotCoreLoop robotCoreLoop;
 
     //Run after Spring context initialization
-    public void onApplicationEvent(ContextRefreshedEvent event)
+    public void run(ApplicationArguments args)
     {
-        //robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathController, pathplanningType, dataService);
+        new Thread(new StartupProcess()).start();
+    }
 
-        QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
-        CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
+    private class StartupProcess implements Runnable
+    {
+        @Override
+        public void run()
+        {
+            try
+            {
+                Thread.sleep(200);
+            }
+            catch(InterruptedException ex)
+            {
+                //Thread interrupted
+            }
 
-        //Temporary fix for new instantiated RobotCoreLoop / QueueConsumer class (no Spring handling)
-        robotCoreLoop.setServerCoreIP(serverIP, serverPort);
-        queueConsumer.setServerCoreIP(serverIP, serverPort);
+            //robotCoreLoop = new RobotCoreLoop(queueService, mapController, pathController, pathplanningType, dataService);
 
-        new Thread(robotCoreLoop).start();
-        new Thread(cStatusEventHandler).start();
-        new Thread(queueConsumer).start();
-        new Thread(cLocationPoller).start();
-        terminalService.setRobotCoreLoop(robotCoreLoop);
+            QueueConsumer queueConsumer = new QueueConsumer(queueService,cCommandSender, dataService);
+            CLocationPoller cLocationPoller = new CLocationPoller(cCommandSender);
 
-        terminalService.systemReady();
+            //Temporary fix for new instantiated RobotCoreLoop / QueueConsumer class (no Spring handling)
+            robotCoreLoop.setServerCoreIP(serverIP, serverPort);
+            queueConsumer.setServerCoreIP(serverIP, serverPort);
+
+            new Thread(robotCoreLoop).start();
+            //new Thread(cStatusEventHandler).start();
+            new Thread(queueConsumer).start();
+            //new Thread(cLocationPoller).start();
+            terminalService.setRobotCoreLoop(robotCoreLoop);
+
+            terminalService.systemReady();
+        }
     }
 }

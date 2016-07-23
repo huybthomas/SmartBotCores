@@ -60,5 +60,6 @@
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.9" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.6.2" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2" level="project" />
+    <orderEntry type="module" module-name="SmartCity Common" />
   </component>
 </module>
